@@ -13,3 +13,11 @@
   display: block;
   opacity: 1;
 }
+
+/* Micro anim: icon slides right on collection card hover */
+.collection_card_link .icon-1x1-small {
+  transition: transform 200ms ease;
+}
+.collection_card_link:hover .icon-1x1-small {
+  transform: translateX(0.25rem);
+}
