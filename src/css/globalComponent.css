@@ -1,0 +1,15 @@
+/* Global reusable components */
+/*Scroll to top*/
+#scroll-top {
+  display: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 200ms,
+    transform 200ms;
+}
+
+#scroll-top.is-visible {
+  display: block;
+  opacity: 1;
+}

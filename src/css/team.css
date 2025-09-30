@@ -1,0 +1,24 @@
+/* Team interactions (accordion-like) */
+.team_item .team_hide-content,
+.team_item .team_right-col {
+  display: flex;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 300ms ease,
+    opacity 250ms ease;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.team_item.is-open .team_name {
+  color: var(--_brand---text--primary);
+}
+
+.team_item.is-open .team_hide-content,
+.team_item.is-open .team_right-col {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}

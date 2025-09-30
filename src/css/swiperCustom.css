@@ -1,0 +1,23 @@
+/* Swiper minimal base (no library CSS import) */
+.swiper {
+  overflow: hidden;
+}
+.swiper-wrapper {
+  display: flex;
+}
+.swiper-slide {
+  flex-shrink: 0;
+}
+
+/* Custom bullets */
+.swiper-bullet {
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid #16151d;
+  border-radius: 62.5rem;
+  display: inline-block;
+  margin: 0 6px;
+}
+.swiper-bullet.is-active {
+  background: #16151d;
+}
