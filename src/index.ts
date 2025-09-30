@@ -1,9 +1,10 @@
 import './index.css';
 
+import { setupCustomPiecesProgress } from './customPieces';
 import { setupTeamInteractions } from './team';
 import { setupStepTimeline } from './timeline';
-import { swiperStep } from './utils/swiper';
-import { setupScrollTop, svgComponent } from './utils/ui';
+import { swiperCustomPieces, swiperStep, swiperTestimonial } from './utils/swiper';
+import { setupHeroCustomCursor, setupScrollTop, svgComponent } from './utils/ui';
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
@@ -21,6 +22,12 @@ window.Webflow.push(() => {
       maxHeightPx: 20000,
       easingPower: 1.8,
     });
+  }
+  if (window.location?.pathname.includes('/custom-pieces')) {
+    swiperCustomPieces();
+    setupHeroCustomCursor('.hero-slider_content');
+    setupCustomPiecesProgress('.project-custom_content');
+    swiperTestimonial();
   }
 
   // Scroll-to-top button
