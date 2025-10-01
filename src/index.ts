@@ -4,7 +4,7 @@ import { setupCustomPiecesProgress } from './customPieces';
 import { setupTeamInteractions } from './team';
 import { setupStepTimeline } from './timeline';
 import { swiperCustomPieces, swiperStep, swiperTestimonial } from './utils/swiper';
-import { setupHeroCustomCursor, setupScrollTop, svgComponent } from './utils/ui';
+import { faqDropdown, setupScrollTop, sliderCustomCursor, svgComponent } from './utils/ui';
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
@@ -13,6 +13,7 @@ window.Webflow.push(() => {
   }
   if (window.location?.pathname.includes('/how-we-make-it')) {
     swiperStep();
+    sliderCustomCursor('.step_slider-wrapper', '.swiper.is-step');
     setupStepTimeline({
       containerSelector: '.step_content',
       timelineSelector: '.step_timeline',
@@ -25,10 +26,14 @@ window.Webflow.push(() => {
   }
   if (window.location?.pathname.includes('/custom-pieces')) {
     swiperCustomPieces();
-    setupHeroCustomCursor('.hero-slider_content');
+    sliderCustomCursor('.hero-slider_content', '.swiper.is-custom-pieces-bg');
     setupCustomPiecesProgress('.project-custom_content');
     swiperTestimonial();
+    sliderCustomCursor('.section_testimonial', '.swiper.is-testimonial');
   }
+
+  // FAQ accordion
+  faqDropdown('.faq_question');
 
   // Scroll-to-top button
   setupScrollTop('scroll-top', 200);

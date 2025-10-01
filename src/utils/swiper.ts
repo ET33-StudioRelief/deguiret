@@ -98,7 +98,7 @@ export function swiperTestimonial(): void {
       slidesPerView: 1,
       speed: 500,
       effect: 'slide',
-      loop: false,
+      loop: true,
       allowTouchMove: true,
       pagination: paginationEl
         ? {
