@@ -21,3 +21,14 @@
 .collection_card_link:hover .icon-1x1-small {
   transform: translateX(0.25rem);
 }
+
+/* FAQ accordion */
+.faq_answer {
+  transition: height 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.faq_question .icon-1x1-small {
+  transition: transform 300ms ease;
+}
+.faq_question.is-open .icon-1x1-small {
+  transform: rotate(180deg);
+}
