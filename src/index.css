@@ -17,7 +17,7 @@
 /* Active l’animation pour tout élément dont la classe contient "section_" */
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
-    [class*='section_']:not([class*='hero']) {
+    [class*='section_']:not([class*='hero']):not([class*='watches']) {
       animation-name: fadeIn;
       animation-duration: 200ms;
       animation-timing-function: ease-out;
