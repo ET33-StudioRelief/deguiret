@@ -32,3 +32,21 @@
 .faq_question.is-open .icon-1x1-small {
   transform: rotate(180deg);
 }
+/* Rich text */
+.text-rich-text ul,
+.text-rich-text ol {
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+/* Dropdown: rotate icon when list is open (CSS-only) */
+.hp-gallery_dropdown-visible .icon-1x1-small {
+  transition: transform 200ms ease;
+  transform: rotate(0deg);
+}
+
+/* Webflow structure: .w-dropdown > .w-dropdown-toggle (here .hp-gallery_dropdown-visible) + .w-dropdown-list.w--open */
+.w-dropdown:has(.w-dropdown-list.w--open) .hp-gallery_dropdown-visible .icon-1x1-small {
+  transform: rotate(180deg);
+}

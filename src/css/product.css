@@ -1,0 +1,23 @@
+.product-step_accordion.active .product-step_right-embed-wrapper {
+  display: block;
+}
+.product-step_accordion.active .product-step_column {
+  background-color: var(--_brand---background--opacities);
+}
+.product-step_accordion {
+  overflow: hidden;
+  transition: width 400ms ease;
+}
+
+/* Table: show only the active step content */
+.table_step-content {
+  display: none;
+}
+.table_step-content.is-active {
+  display: flex;
+}
+
+/* Onglet actif: couleur primaire */
+.table_row .table_row-item.is-active {
+  color: var(--_brand---text--primary);
+}

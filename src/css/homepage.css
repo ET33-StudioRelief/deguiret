@@ -1,0 +1,37 @@
+/* Homepage gallery hover effects */
+.watches_gallery_item {
+  position: relative;
+}
+.watches_gallery_img,
+.watches_gallery_txt-wrap {
+  transition: opacity 280ms ease;
+}
+/* Hover (desktop pointer) */
+.watches_gallery_item:hover .watches_gallery_img,
+.watches_gallery_item:hover .watches_gallery_txt-wrap {
+  opacity: 1;
+}
+/* Programmatic hover (touch/keyboard) */
+.watches_gallery_item.is-hover .watches_gallery_img,
+.watches_gallery_item.is-hover .watches_gallery_txt-wrap {
+  opacity: 1;
+}
+
+/* Pattern 2-1-2-1 basé sur la structure Webflow (.watches_gallery > .w-dyn-item) */
+.watches_gallery {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: var(--_responsive---margin--padding--spacer--gap--xhuge, 2rem) !important;
+  grid-auto-flow: row dense !important;
+}
+.watches_gallery > .w-dyn-item {
+  grid-column: span 1 !important;
+}
+.watches_gallery > .w-dyn-item:nth-child(3n) {
+  grid-column: 1 / -1 !important;
+}
+
+/* Quand l'item occupe la ligne (3e, 6e, 9e, ...), on force l'affichage de l'image même si is-empty */
+.watches_gallery > .w-dyn-item:nth-child(3n) .watches_gallery_img-wrap.is-empty {
+  display: block !important;
+}
