@@ -1,7 +1,12 @@
 import './index.css';
 
 import { setupCustomPiecesProgress } from './typescript/customPieces';
-import { setupHomepageGalleryHover } from './typescript/homepage';
+import {
+  galleryTextBlock,
+  setupWatchesRowsInView,
+  setupWatchesSortToggle,
+  setupWatchesViewToggle,
+} from './typescript/homepage';
 import {
   setupProductAccordion,
   setupProductFeaturesTable,
@@ -49,7 +54,10 @@ window.Webflow.push(() => {
     setupStoryNav();
   }
   // Shared on homepage/other pages where the gallery appears
-  setupHomepageGalleryHover();
+  galleryTextBlock();
+  setupWatchesViewToggle();
+  setupWatchesSortToggle();
+  setupWatchesRowsInView();
   if (window.location?.pathname.includes('/watches')) {
     swiperProduct();
     sliderCustomCursor('.product-slider_content', '.swiper.is-product');
