@@ -1,9 +1,23 @@
 import './index.css';
 
-import { setupCustomPiecesProgress } from './customPieces';
-import { setupTeamInteractions } from './team';
-import { setupStepTimeline } from './timeline';
-import { swiperCustomPieces, swiperStep, swiperTestimonial } from './utils/swiper';
+import { setupCustomPiecesProgress } from './typescript/customPieces';
+import { setupHomepageGalleryHover } from './typescript/homepage';
+import {
+  setupProductAccordion,
+  setupProductFeaturesTable,
+  setupProductPrevNext,
+} from './typescript/product';
+import { setupStoryNav } from './typescript/story';
+import { setupTeamInteractions } from './typescript/team';
+import { setupStepTimeline } from './typescript/timeline';
+import { setupDarkMode } from './utils/darkMode';
+import {
+  swiperCollection,
+  swiperCustomPieces,
+  swiperProduct,
+  swiperStep,
+  swiperTestimonial,
+} from './utils/swiper';
 import { faqDropdown, setupScrollTop, sliderCustomCursor, svgComponent } from './utils/ui';
 
 window.Webflow ||= [];
@@ -31,10 +45,24 @@ window.Webflow.push(() => {
     swiperTestimonial();
     sliderCustomCursor('.section_testimonial', '.swiper.is-testimonial');
   }
-
+  if (window.location?.pathname.includes('/our-story')) {
+    setupStoryNav();
+  }
+  // Shared on homepage/other pages where the gallery appears
+  setupHomepageGalleryHover();
+  if (window.location?.pathname.includes('/watches')) {
+    swiperProduct();
+    sliderCustomCursor('.product-slider_content', '.swiper.is-product');
+    swiperCollection();
+    sliderCustomCursor('.collection-slider_content', '.swiper.is-front-collection');
+    setupProductAccordion();
+    setupProductFeaturesTable();
+    setupProductPrevNext('#show-prev-product', '#show-next-product', '.w-dyn-items .w-dyn-item a');
+  }
+  // Dark mode toggle
+  setupDarkMode();
   // FAQ accordion
   faqDropdown('.faq_question');
-
   // Scroll-to-top button
   setupScrollTop('scroll-top', 200);
   svgComponent();
