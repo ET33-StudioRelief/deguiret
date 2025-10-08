@@ -70,8 +70,13 @@ export function swiperCustomPieces(): void {
       allowTouchMove: false, // navigation pilotée par le BG (ou par boutons communs)
     });
 
-    // Sync dans les deux sens
-    // Le front pilote le background (synchro unidirectionnelle)
+    // Sync bidirectionnelle, mais c'est le BG qui pilote principalement
+    // BG -> FRONT
+    bgSwiper.controller.control = frontSwiper;
+    bgSwiper.on('slideChange', () => {
+      frontSwiper.slideToLoop(bgSwiper.realIndex, 0, false);
+    });
+    // FRONT -> BG (au cas où on déclenche via API/boutons sur le front)
     frontSwiper.controller.control = bgSwiper;
     frontSwiper.on('slideChange', () => {
       bgSwiper.slideToLoop(frontSwiper.realIndex, 0, false);

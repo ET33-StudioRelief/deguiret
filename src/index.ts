@@ -1,5 +1,6 @@
 import './index.css';
 
+import { setupNavbarHoverImages } from './typescript/component';
 import { setupCustomPiecesProgress } from './typescript/customPieces';
 import {
   galleryTextBlock,
@@ -58,6 +59,7 @@ window.Webflow.push(() => {
   setupWatchesViewToggle();
   setupWatchesSortToggle();
   setupWatchesRowsInView();
+  setupNavbarHoverImages();
   if (window.location?.pathname.includes('/watches')) {
     swiperProduct();
     sliderCustomCursor('.product-slider_content', '.swiper.is-product');
