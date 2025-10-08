@@ -1,0 +1,6 @@
+/* Custom pieces progress: color label on logo hover */
+.project-custom_progress-step:has(.project-custom_progress-logo-wrapper:hover) > p,
+.project-custom_progress-step:has(.project-custom_progress-logo-wrapper:focus) > p,
+.project-custom_progress-step:has(.project-custom_progress-logo-wrapper:focus-within) > p {
+  color: var(--_brand---text--primary) !important;
+}

@@ -50,3 +50,8 @@
 .w-dropdown:has(.w-dropdown-list.w--open) .watches_dropdown-visible .icon-1x1-small {
   transform: rotate(180deg);
 }
+/*NAVBAR*/
+.navbar_img-wrapper {
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+}

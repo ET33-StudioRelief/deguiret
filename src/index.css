@@ -3,30 +3,5 @@
 @import './css/globalComponent.css';
 @import './css/product.css';
 @import './css/homepage.css';
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(1px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Active l’animation pour tout élément dont la classe contient "section_" */
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    [class*='section_']:not([class*='hero']):not([class*='watches']) {
-      animation-name: fadeIn;
-      animation-duration: 200ms;
-      animation-timing-function: ease-out;
-      animation-fill-mode: both;
-
-      /* Scroll-driven */
-      animation-timeline: view();
-      /* start and end of the animation */
-      animation-range: 5% 30%;
-    }
-  }
-}
+@import './css/customPieces.css';
+@import './css/sectionApparition.css';
