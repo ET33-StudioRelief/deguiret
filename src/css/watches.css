@@ -1,0 +1,76 @@
+/* Desktop : comportement horizontal avec width */
+.product-step_accordion.active .product-step_right-embed-wrapper {
+  display: block;
+}
+.product-step_accordion.active .product-step_column {
+  background-color: var(--_brand---background--opacities);
+}
+.product-step_accordion {
+  overflow: hidden;
+  transition: width 400ms ease;
+}
+
+/* Mobile/Tablette : comportement vertical avec height */
+@media screen and (max-width: 991px) {
+  .product-step_right-embed-wrapper {
+    display: none !important;
+  }
+  .product-step_accordion {
+    transition: height 400ms ease;
+  }
+
+  /* Cacher le contenu par défaut */
+  .product-step_column-content {
+    display: none;
+    max-height: 0;
+    opacity: 0;
+    transition:
+      max-height 400ms ease,
+      opacity 300ms ease;
+  }
+
+  /* Afficher le contenu quand actif */
+  .product-step_accordion.active .product-step_column-content {
+    display: block;
+    max-height: 100vh;
+    opacity: 1;
+  }
+}
+
+/* Table: show only the active step content */
+.table_step-content {
+  display: none;
+}
+.table_step-content.is-active {
+  display: flex;
+}
+
+/* Onglet actif: couleur primaire */
+.table_row .table_row-item.is-active {
+  color: var(--_brand---text--primary);
+}
+@media (min-width: 768px) and (max-width: 1100px) {
+  .product-hero_content {
+    grid-template-columns: 1fr 1fr; /* 2 colonnes égales */
+  }
+
+  /* Le 3ème élément prend les 2 colonnes */
+  .product-hero_content > :nth-child(3) {
+    grid-column: 1 / -1; /* span sur toutes les colonnes (de 1 à fin) */
+  }
+
+  .product-hero_description-wrap {
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+    align-items: stretch;
+    column-gap: var(--_responsive---margin--padding--spacer--gap--xxhuge);
+    row-gap: var(--_responsive---margin--padding--spacer--gap--xxhuge);
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .product-hero_img-wrap {
+    order: -1 !important; /* passe avant .product-hero_left */
+  }
+}

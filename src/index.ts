@@ -15,7 +15,7 @@ import {
 } from './typescript/product';
 import { setupStoryNav } from './typescript/story';
 import { setupTeamInteractions } from './typescript/team';
-import { setupStepTimeline } from './typescript/timeline';
+import { setupTimeline } from './typescript/timeline';
 import { setupDarkMode } from './utils/darkMode';
 import {
   swiperCollection,
@@ -34,15 +34,7 @@ window.Webflow.push(() => {
   if (window.location?.pathname.includes('/how-we-make-it')) {
     swiperStep();
     sliderCustomCursor('.step_slider-wrapper', '.swiper.is-step');
-    setupStepTimeline({
-      containerSelector: '.step_content',
-      timelineSelector: '.step_timeline',
-      offsetTopPx: 80,
-      offsetBottomPx: 80,
-      minHeightPx: 0,
-      maxHeightPx: 20000,
-      easingPower: 1.8,
-    });
+    setupTimeline();
   }
   if (window.location?.pathname.includes('/custom-pieces')) {
     swiperCustomPieces();

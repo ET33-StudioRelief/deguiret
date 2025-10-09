@@ -1,70 +1,47 @@
-export type StepTimelineOptions = {
-  containerSelector?: string; // e.g. '.step_content'
-  timelineSelector?: string; // e.g. '.step_timeline'
-  offsetTopPx?: number; // top margin before filling starts
-  offsetBottomPx?: number; // bottom margin before reaching the end
-  minHeightPx?: number; // minimum visible height
-  maxHeightPx?: number; // safety clamp
-  easingPower?: number; // >1 slows early growth, keeps 1->1 mapping
-};
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+gsap.registerPlugin(ScrollTrigger);
 
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
-
-export function setupStepTimeline(options?: StepTimelineOptions): void {
-  // 1) Resolve options with sensible defaults
-  const containerSelector = options?.containerSelector ?? '.step_content';
-  const timelineSelector = options?.timelineSelector ?? '.step_timeline';
-  const offsetTop = options?.offsetTopPx ?? 0;
-  const offsetBottom = options?.offsetBottomPx ?? 0;
-  const minHeight = options?.minHeightPx ?? 0;
-  const maxHeight = options?.maxHeightPx ?? 100000;
-  const easingPower = options?.easingPower ?? 1; // 1 = linear
-
-  // 2) Grab containers and precompute each base height (without timeline growth)
+export function setupTimeline(
+  containerSelector = '.step_content',
+  wrapperSelector = '.step_timeline-wrapper',
+  fullLineSelector = '.step_timeline.is-full-height',
+  logoSelector = '.step_timeline-logo-wrapper',
+  slidesWrapSelector = '.step_slides-wrap'
+): void {
   const containers = Array.from(document.querySelectorAll<HTMLElement>(containerSelector));
   if (containers.length === 0) return;
 
-  const states = containers
-    .map((container) => {
-      const timeline = container.querySelector<HTMLElement>(timelineSelector);
-      if (!timeline) return null;
-      const prev = timeline.style.height;
-      timeline.style.height = '0px';
-      const baseHeight = container.scrollHeight; // intrinsic content height
-      timeline.style.height = prev;
-      return { container, timeline, baseHeight };
-    })
-    .filter((s): s is { container: HTMLElement; timeline: HTMLElement; baseHeight: number } => !!s);
+  containers.forEach((container) => {
+    const wrapper = container.querySelector<HTMLElement>(wrapperSelector);
+    const full = wrapper?.querySelector<HTMLElement>(fullLineSelector);
+    const logo = wrapper?.querySelector<HTMLElement>(logoSelector);
+    const slides = container.querySelector<HTMLElement>(slidesWrapSelector) || container;
+    if (!wrapper || !full || !logo) return;
 
-  // 3) On scroll/resize, compute progress and set timeline height
-  const onScroll = () => {
-    const viewportH = window.innerHeight || document.documentElement.clientHeight;
-    states.forEach(({ container, timeline, baseHeight }) => {
-      const rect = container.getBoundingClientRect();
+    const baseTop = logo.offsetTop || 0; // position initiale du logo
 
-      // Visible segment of the container inside the viewport
-      const visibleTop = clamp(-rect.top + offsetTop, 0, rect.height);
-      const visibleBottom = clamp(viewportH - rect.top - offsetBottom, 0, rect.height);
-      const visible = Math.max(
-        0,
-        Math.min(visibleBottom, rect.height) - Math.max(0, -rect.top + offsetTop)
-      );
+    ScrollTrigger.create({
+      trigger: slides,
+      start: 'top 80%', // démarre plus tard
+      end: 'bottom 20%',
+      scrub: true,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        const wrapH = wrapper.clientHeight;
+        const logoH = logo.clientHeight || 0;
+        const maxAbove = Math.max(0, wrapH - logoH); // max “au‑dessus du logo”
+        const current = maxAbove * self.progress; // progression lissée par scrub
 
-      // Progress ratio 0→1 with respect to the base height (not current layout)
-      const progress = clamp((visibleTop + visible) / (baseHeight || 1), 0, 1);
-      // Apply easing so the line reveals slower/faster while still reaching 100% at end
-      const eased = Math.pow(progress, easingPower);
+        // 1) split des couleurs: au‑dessus du logo
+        const above = Math.max(0, Math.min(wrapH, current));
+        full.style.setProperty('--above', `${above}px`);
 
-      // Target height clamped so it never increases the container height
-      const hardMax = Math.min(maxHeight, baseHeight);
-      const target = clamp(eased * baseHeight, minHeight, hardMax);
-      timeline.style.height = `${Math.round(target)}px`;
+        // 2) logo qui “suit” sans perdre sa baseline
+        const y = Math.max(0, above - baseTop);
+        logo.style.transform = `translateY(${y}px)`;
+        logo.style.willChange = 'transform';
+      },
     });
-  };
-
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll);
-  onScroll();
+  });
 }

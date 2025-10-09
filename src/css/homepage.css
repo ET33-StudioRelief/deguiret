@@ -1,127 +1,106 @@
-/* GALLERY - hover effects */
-.watches_gallery_item {
-  position: relative;
-}
-.watches_gallery_img-wrap:not([class*=' ']):not([class*='is-']) {
-  position: relative;
-  transition: filter 280ms ease;
-}
-.watches_gallery_img-wrap:not([class*=' ']):not([class*='is-'])::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    0deg,
-    var(--filter-dark-large, rgba(22, 21, 29, 0.75)) 0%,
-    var(--filter-dark-large, rgba(22, 21, 29, 0.75)) 100%
-  );
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 280ms ease;
-  z-index: 1;
-}
-.watches_gallery_img,
-.watches_gallery_txt-wrap:not(.is-title) {
-  transition: opacity 280ms ease;
-}
-.watches_gallery_item:hover .watches_gallery_img,
-.watches_gallery_item:hover .watches_gallery_txt-wrap:not(.is-title) {
-  opacity: 1;
-}
-.watches_gallery_item.is-hover .watches_gallery_img,
-.watches_gallery_item.is-hover .watches_gallery_txt-wrap:not(.is-title) {
-  opacity: 1;
+@media screen and (min-width: 992px) {
+  /* Ne montrer que pour la première ligne large, marquée par JS */
+  .watches_gallery_item-wrap.is-feature-line > .watches_gallery_txt-wrap.is-title {
+    display: flex !important;
+  }
+  .watches_gallery_img,
+  .watches_gallery_txt-wrap:not(.is-title) {
+    transition: opacity 280ms ease;
+  }
+  .watches_gallery_item:hover .watches_gallery_img,
+  .watches_gallery_item:hover .watches_gallery_txt-wrap:not(.is-title) {
+    opacity: 1;
+  }
+  .watches_gallery_item.is-hover .watches_gallery_img,
+  .watches_gallery_item.is-hover .watches_gallery_txt-wrap:not(.is-title) {
+    opacity: 1;
+  }
+
+  /* GALLERY- Pattern 2-1-2-1... */
+  .watches_gallery {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 120px !important;
+    grid-auto-flow: row dense !important;
+  }
+  .watches_gallery > .watches_gallery_item-wrap {
+    grid-column: span 1 !important;
+  }
+  .watches_gallery > .watches_gallery_item-wrap:nth-child(3n) {
+    grid-column: 1 / -1 !important;
+  }
+  .watches_gallery > .watches_gallery_item-wrap:nth-child(3n) .watches_gallery_img-wrap.is-empty {
+    display: block !important;
+  }
+  /* Sur chaque 3e item (ligne large): l'item s'étend sur les 2 colonnes et crée sa propre grille interne avec un gap plus petit */
+  .watches_gallery > .watches_gallery_item-wrap:nth-child(3n) .watches_gallery_item {
+    display: flex !important;
+  }
 }
 
-/* Au hover sur un item, applique overlay + blur sur les autres */
-.watches_gallery:has(.watches_gallery_item:hover)
-  .watches_gallery_item:not(:hover)
-  .watches_gallery_img-wrap:not([class*=' ']):not([class*='is-'])::before,
-.watches_gallery:has(.watches_gallery_item.is-hover)
-  .watches_gallery_item:not(.is-hover)
-  .watches_gallery_img-wrap:not([class*=' ']):not([class*='is-'])::before {
-  opacity: 1;
-}
-.watches_gallery:has(.watches_gallery_item:hover)
-  .watches_gallery_item:not(:hover)
+/* GALLERY + GRID - Base overlay setup (desktop only) */
+@media (min-width: 992px) {
   .watches_gallery_img-wrap:not([class*=' ']):not([class*='is-']),
-.watches_gallery:has(.watches_gallery_item.is-hover)
-  .watches_gallery_item:not(.is-hover)
-  .watches_gallery_img-wrap:not([class*=' ']):not([class*='is-']) {
-  filter: blur(calc(var(--blur-small, 4px) / 2));
-}
-
-/* GALLERY- Pattern 2-1-2-1... */
-.watches_gallery {
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 120px !important;
-  grid-auto-flow: row dense !important;
-}
-.watches_gallery > .watches_gallery_item-wrap {
-  grid-column: span 1 !important;
-}
-.watches_gallery > .watches_gallery_item-wrap:nth-child(3n) {
-  grid-column: 1 / -1 !important;
-}
-.watches_gallery > .watches_gallery_item-wrap:nth-child(3n) .watches_gallery_img-wrap.is-empty {
-  display: block !important;
-}
-/* Sur chaque 3e item (ligne large): l'item s'étend sur les 2 colonnes et crée sa propre grille interne avec un gap plus petit */
-.watches_gallery > .watches_gallery_item-wrap:nth-child(3n) .watches_gallery_item {
-  display: flex !important;
-}
-/* GRID - TEXT BLOCK */
-/* Affiche le bloc texte additionnel uniquement sur la ligne large */
-.watches_gallery_item-wrap > .watches_gallery_txt-wrap.is-title {
-  display: none !important;
-}
-/* Ne montrer que pour la première ligne large, marquée par JS */
-.watches_gallery_item-wrap.is-feature-line > .watches_gallery_txt-wrap.is-title {
-  display: flex !important;
-}
-
-/* GRID - hover effects */
-.watches_grid_card {
-  position: relative;
-}
-.watches_grid_img-wrap:not([class*=' ']):not([class*='is-']) {
-  position: relative;
-  transition: filter 280ms ease;
-}
-.watches_grid_img-wrap:not([class*=' ']):not([class*='is-'])::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    0deg,
-    var(--filter-dark-large, rgba(22, 21, 29, 0.75)) 0%,
-    var(--filter-dark-large, rgba(22, 21, 29, 0.75)) 100%
-  );
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 280ms ease;
-  z-index: 1;
-}
-.watches_grid_card .watches_gallery_img,
-.watches_grid_card .watches_grid_text-wrap {
-  transition: opacity 280ms ease;
-}
-.watches_grid_card:hover .watches_gallery_img,
-.watches_grid_card:hover .watches_grid_text-wrap {
-  opacity: 1;
-}
-
-/* Au hover sur un item, applique overlay + blur sur les autres */
-.watches_grid:has(.watches_grid_card:hover)
-  .watches_grid_card:not(:hover)
-  .watches_grid_img-wrap:not([class*=' ']):not([class*='is-'])::before {
-  opacity: 1;
-}
-.watches_grid:has(.watches_grid_card:hover)
-  .watches_grid_card:not(:hover)
   .watches_grid_img-wrap:not([class*=' ']):not([class*='is-']) {
-  filter: blur(calc(var(--blur-small, 4px) / 2));
+    position: relative;
+    transition: filter 280ms ease;
+  }
+
+  .watches_gallery_img-wrap:not([class*=' ']):not([class*='is-'])::before,
+  .watches_grid_img-wrap:not([class*=' ']):not([class*='is-'])::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      0deg,
+      var(--filter-dark-large, rgba(22, 21, 29, 0.75)) 0%,
+      var(--filter-dark-large, rgba(22, 21, 29, 0.75)) 100%
+    );
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 280ms ease;
+    z-index: 1;
+  }
+}
+
+/* GALLERY - Hover effects (desktop only) */
+@media (min-width: 992px) {
+  .watches_gallery:has(.watches_gallery_item:hover)
+    .watches_gallery_item:not(:hover)
+    .watches_gallery_img-wrap:not([class*=' ']):not([class*='is-'])::before {
+    opacity: 1;
+  }
+
+  .watches_gallery:has(.watches_gallery_item:hover)
+    .watches_gallery_item:not(:hover)
+    .watches_gallery_img-wrap:not([class*=' ']):not([class*='is-']) {
+    filter: blur(calc(var(--blur-small, 4px) / 2));
+  }
+}
+
+/* GRID - Hover effects (desktop only) */
+@media (min-width: 992px) {
+  .watches_grid_card .watches_gallery_img,
+  .watches_grid_card .watches_grid_text-wrap {
+    transition: opacity 280ms ease;
+  }
+
+  .watches_grid_card:hover .watches_gallery_img,
+  .watches_grid_card:hover .watches_grid_text-wrap {
+    opacity: 1;
+  }
+
+  .watches_grid:has(.watches_grid_card:hover)
+    .watches_grid_card:not(:hover)
+    .watches_grid_img-wrap:not([class*=' ']):not([class*='is-'])::before {
+    opacity: 1;
+  }
+
+  .watches_grid:has(.watches_grid_card:hover)
+    .watches_grid_card:not(:hover)
+    .watches_grid_img-wrap:not([class*=' ']):not([class*='is-']) {
+    filter: blur(calc(var(--blur-small, 4px) / 2));
+  }
 }
 
 /* VIEW TOGGLE - smooth reveal/hide for gallery/grid wrappers */

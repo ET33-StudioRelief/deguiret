@@ -1,0 +1,36 @@
+.step_timeline.is-full-height {
+  background-image: linear-gradient(
+      var(--_brand---background--tertiary),
+      var(--_brand---background--tertiary)
+    ),
+    linear-gradient(var(--_brand---background--secondary), var(--_brand---background--secondary));
+  background-repeat: no-repeat, no-repeat;
+  background-size:
+    1px var(--above, 0px),
+    1px calc(100% - var(--above, 0px));
+  background-position:
+    50% 0,
+    50% var(--above, 0px);
+}
+
+@media screen and (max-width: 1180px) {
+  .step_slide,
+  .step_slide.is-inverse {
+    flex-direction: column;
+    column-gap: var(--_responsive---margin--padding--spacer--gap--large);
+    row-gap: var(--_responsive---margin--padding--spacer--gap--large);
+  }
+  .step_slides-wrap {
+    width: 90%;
+    margin-left: auto;
+  }
+  .step_timeline-wrapper {
+    left: 5%;
+  }
+  .step_right-rich-text-wrapper {
+    padding-top: var(--_responsive---margin--padding--spacer--gap--xlarge);
+    padding-right: var(--_responsive---margin--padding--spacer--gap--xlarge);
+    padding-bottom: var(--_responsive---margin--padding--spacer--gap--xlarge);
+    padding-left: var(--_responsive---margin--padding--spacer--gap--xlarge);
+  }
+}
