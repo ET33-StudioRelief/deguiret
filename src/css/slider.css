@@ -13,13 +13,13 @@
 .swiper-bullet {
   width: 0.5rem;
   height: 0.5rem;
-  border: 1px solid #16151d;
+  border: 1px solid var(--_brand---border--secondary);
   border-radius: 62.5rem;
   display: inline-block;
   margin: 0 6px;
 }
 .swiper-bullet.is-active {
-  background: #16151d;
+  background: var(--_brand---background--tertiary);
 }
 /* Product slider thumbs */
 .swiper-slide.is-product-thumbs {
