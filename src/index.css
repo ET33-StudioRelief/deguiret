@@ -1,7 +1,8 @@
 @import './css/team.css';
-@import './css/swiperCustom.css';
-@import './css/globalComponent.css';
-@import './css/product.css';
+@import './css/slider.css';
+@import './css/component.css';
+@import './css/watches.css';
 @import './css/homepage.css';
 @import './css/customPieces.css';
-@import './css/sectionApparition.css';
+@import './css/animation.css';
+@import './css/timeline.css';

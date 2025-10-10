@@ -4,6 +4,7 @@ export type TeamInteractionsOptions = {
 
 export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
   const teamItems = Array.from(document.querySelectorAll<HTMLElement>('.team_item'));
+  if (teamItems.length === 0) return;
 
   const getContentElements = (container: HTMLElement): HTMLElement[] => {
     return Array.from(
@@ -60,13 +61,9 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
 
   teamItems.forEach((item) => {
     item.addEventListener('click', () => {
-      const isOpen = item.classList.contains('is-open');
+      const willOpen = !item.classList.contains('is-open');
       closeAll(item);
-      if (!isOpen) {
-        openItem(item);
-      } else {
-        closeItem(item);
-      }
+      if (willOpen) openItem(item);
     });
   });
 

@@ -1,6 +1,4 @@
 // Navbar hover images swapper
-// Changes `.navbar_img-wrapper` background-image based on hovered `.navbar_link[data-image]`
-// Accessibility: also reacts to focus/blur to support keyboard navigation
 
 type ImageKey = 'default' | '1' | '2' | '3' | '4' | '5' | '6';
 
@@ -26,8 +24,6 @@ function getImageUrlFromDataset(el: HTMLElement | null): string {
 function setNavbarImage(wrapper: HTMLElement, url: string): void {
   wrapper.style.backgroundImage = `url("${url}")`;
   wrapper.style.backgroundSize = 'cover';
-  wrapper.style.backgroundPosition = 'center';
-  wrapper.style.backgroundRepeat = 'no-repeat';
 }
 
 export function setupNavbarHoverImages(
@@ -90,4 +86,27 @@ export function setupNavbarHoverImages(
   document.addEventListener('focusout', onFocusOut);
   // eslint-disable-next-line no-console
   console.log('[navbarImages] listeners attached (delegated)');
+}
+
+// Set navbar variant on specific page and viewport
+export function setupNavbarVariantOnMobile(
+  pagePath = '/who-we-are',
+  selector = '.navbar_component',
+  maxWidthPx = 768
+): void {
+  if (!window.location?.pathname.includes(pagePath)) return;
+  const el = document.querySelector<HTMLElement>(selector);
+  if (!el) return;
+
+  const mql = window.matchMedia(`(max-width: ${maxWidthPx - 1}px)`);
+  const apply = () => {
+    if (mql.matches) {
+      // N'applique que la combo class runtime
+      el.classList.add('is-background');
+    } else {
+      el.classList.remove('is-background');
+    }
+  };
+  apply();
+  mql.addEventListener?.('change', apply);
 }
