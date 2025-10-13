@@ -65,3 +65,21 @@
 .collection_card_link:hover .icon-1x1-small {
   transform: translateX(0.25rem);
 }
+/*Footer form*/
+.footer_form-input.w-input {
+  all: unset;
+}
+.footer_form-input.w-input {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--_brand---border--secondary) !important;
+  padding: var(--_responsive---margin--padding--spacer--gap--medium) 0 !important;
+  height: auto !important;
+  min-height: 2.75rem !important;
+  margin-bottom: 0 !important;
+  line-height: 1.6 !important;
+  width: 100% !important;
+  box-sizing: border-box;
+  color: inherit;
+  font: inherit;
+}

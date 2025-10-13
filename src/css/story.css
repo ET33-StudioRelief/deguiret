@@ -1,3 +1,12 @@
+.story_sticky-nav,
+.our-story_progress-date {
+  transition: opacity 200ms ease;
+}
+.story_sticky-nav.is-hidden,
+.our-story_progress-date.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
 /* Story navigation dots - passed state */
 .story_sticky-nav_dot.is-passed {
   width: 0.5rem;
@@ -5,7 +14,6 @@
   aspect-ratio: 1 / 1;
   background-color: var(--surface-tertiary, #16151d);
 }
-
 /* Our Story: empêcher le retour à la ligne sur le libellé de date */
 #our-story_progress-txt {
   white-space: nowrap;

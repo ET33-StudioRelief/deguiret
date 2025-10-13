@@ -28,7 +28,7 @@ function setNavbarImage(wrapper: HTMLElement, url: string): void {
 
 export function setupNavbarHoverImages(
   linksSelector = '.navbar_link[data-image]',
-  imageWrapperSelector = '.navbar_img-wrapper'
+  imageWrapperSelector = '.navbar_img-wrapper.is-desktop'
 ): void {
   // Debug init
   // eslint-disable-next-line no-console
@@ -51,12 +51,16 @@ export function setupNavbarHoverImages(
   // eslint-disable-next-line no-console
   console.log('[navbarImages] default applied');
 
+  const mqlDesktop = window.matchMedia('(min-width: 992px)');
+
   const handleEnter = (target: HTMLElement) => {
+    if (!mqlDesktop.matches) return;
     setNavbarImage(wrapper, getImageUrlFromDataset(target));
     // eslint-disable-next-line no-console
     console.log('[navbarImages] enter', target.getAttribute('data-image'));
   };
   const handleLeave = () => {
+    if (!mqlDesktop.matches) return;
     setNavbarImage(wrapper, NAVBAR_IMAGES.default);
     // eslint-disable-next-line no-console
     console.log('[navbarImages] leave -> default');
@@ -86,6 +90,11 @@ export function setupNavbarHoverImages(
   document.addEventListener('focusout', onFocusOut);
   // eslint-disable-next-line no-console
   console.log('[navbarImages] listeners attached (delegated)');
+
+  // Reset to default when going below desktop breakpoint
+  mqlDesktop.addEventListener?.('change', () => {
+    if (!mqlDesktop.matches) setNavbarImage(wrapper, NAVBAR_IMAGES.default);
+  });
 }
 
 // Set navbar variant on specific page and viewport
