@@ -79,20 +79,31 @@ export function setupStoryNav(): void {
   window.addEventListener('resize', updateActive);
   updateActive();
 
-  // Masquer la barre de progression ET la sticky-nav quand la section CTA entre dans le viewport
-  const lastSection = document.querySelector<HTMLElement>('.section_cta');
-  const stickyNav = document.querySelector<HTMLElement>('.story_sticky-nav');
-  if ((progressContainer || stickyNav) && lastSection && 'IntersectionObserver' in window) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        const e = entries[0];
-        const hide = e.isIntersecting;
-        if (progressContainer) progressContainer.classList.toggle('is-hidden', hide);
-        if (stickyNav) stickyNav.classList.toggle('is-hidden', hide);
+  // 1) Masquer uniquement our-story_progress-date quand step15 entre dans le viewport
+  const progressHideTarget = document.querySelector<HTMLElement>(
+    '.section_story[data-story="step15"]'
+  );
+  if (progressContainer && progressHideTarget && 'IntersectionObserver' in window) {
+    const ioProgress = new IntersectionObserver(
+      ([entry]) => {
+        progressContainer.classList.toggle('is-hidden', entry.isIntersecting);
       },
-      // Petit décalage: on attend ~15% d'apparition avant de masquer
+      { root: null, threshold: 0, rootMargin: '0px' }
+    );
+    ioProgress.observe(progressHideTarget);
+  }
+
+  // 2) Masquer uniquement story_sticky-nav quand la section CTA entre dans le viewport
+  const stickyNav = document.querySelector<HTMLElement>('.story_sticky-nav');
+  const stickyHideTarget = document.querySelector<HTMLElement>('.section_cta');
+  if (stickyNav && stickyHideTarget && 'IntersectionObserver' in window) {
+    const ioSticky = new IntersectionObserver(
+      ([entry]) => {
+        stickyNav.classList.toggle('is-hidden', entry.isIntersecting);
+      },
+      // Petit décalage pour que la disparition arrive un peu après l'entrée
       { root: null, threshold: 0.15, rootMargin: '0px 0px -7% 0px' }
     );
-    io.observe(lastSection);
+    ioSticky.observe(stickyHideTarget);
   }
 }
