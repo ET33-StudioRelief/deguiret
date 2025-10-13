@@ -22,10 +22,10 @@ export function swiperStep() {
       modules: [Pagination, Autoplay],
       direction: 'horizontal',
       slidesPerView: 1,
-      speed: 500,
+      speed: 800,
       effect: 'slide',
       autoplay: {
-        delay: 800,
+        delay: 3000,
         disableOnInteraction: false,
         pauseOnMouseEnter: true,
       },
