@@ -1,3 +1,6 @@
+.team_item.is-open .team_name {
+  color: var(--_brand---text--primary);
+}
 /* Team interactions (accordion-like) */
 .team_item .team_hide-content,
 .team_item .team_right-col {
@@ -11,8 +14,29 @@
   pointer-events: none;
 }
 
-.team_item.is-open .team_name {
-  color: var(--_brand---text--primary);
+/* Image: invisible par défaut, indépendante de l'ouverture du panneau */
+.team_item .team_img-wrapper {
+  opacity: 0 !important;
+  transition: opacity 280ms ease-in-out;
+}
+/* quand la page est prête → fade-in si l’item est déjà ouvert */
+.is-mounted .team_item.is-open .team_img-wrapper {
+  opacity: 1 !important;
+  transition-delay: 280ms; /* même délai que les autres */
+}
+
+/* 1) Ouvre le bloc caché */
+.team_item.is-open .team_hide-content {
+  max-height: 1000px;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* 2) Puis fade-in de l'image, après un léger délai */
+.team_item.is-open .team_img-wrapper {
+  transition-delay: 280ms;
+  opacity: 1 !important;
 }
 
 /* Arrow mobile rotation */

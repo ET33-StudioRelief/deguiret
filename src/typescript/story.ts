@@ -2,16 +2,17 @@ export function setupStoryNav(): void {
   const dots = [...document.querySelectorAll<HTMLElement>('.story_sticky-nav_dot[data-story]')];
   const sections = [...document.querySelectorAll<HTMLElement>('.section_story[data-story]')];
   const progressLineWrap = document.querySelector<HTMLElement>('.our-story_progress-line-wrap');
+  const progressContainer = document.querySelector<HTMLElement>('.our-story_progress-date');
 
   if (dots.length === 0 || sections.length === 0) return;
 
-  // Créer l'élément texte s'il n'existe pas
-  let progressText = progressLineWrap?.querySelector<HTMLElement>('.our-story_progress-date-text');
-  if (progressLineWrap && !progressText) {
-    progressText = document.createElement('div');
-    progressText.className = 'our-story_progress-date-text';
-    progressLineWrap.appendChild(progressText);
-  }
+  const progressPast =
+    progressLineWrap?.querySelector<HTMLElement>('.our-story_progress-line:not(.is-futur)') || null;
+  const progressFuture =
+    progressLineWrap?.querySelector<HTMLElement>('.our-story_progress-line.is-futur') || null;
+  const progressTxt =
+    progressLineWrap?.querySelector<HTMLElement>('#our-story_progress-txt') || null;
+  // On utilise uniquement #our-story_progress-txt (aucun autre élément nécessaire)
 
   const updateActive = () => {
     const viewportCenter = window.innerHeight / 2;
@@ -38,25 +39,22 @@ export function setupStoryNav(): void {
     const totalSteps = sections.length;
     const progressPercent = totalSteps > 1 ? (closestIndex / (totalSteps - 1)) * 100 : 0;
 
-    // Inject CSS variable for split line (::before/::after)
+    // Largeur des barres passé/futur et variable CSS de progression
     if (progressLineWrap) {
       progressLineWrap.style.setProperty('--progress', `${progressPercent}%`);
+      if (progressPast) {
+        progressPast.style.width = `${progressPercent}%`;
+        progressPast.style.left = '0%';
+      }
+      if (progressFuture) {
+        progressFuture.style.left = `${progressPercent}%`;
+        progressFuture.style.width = `${Math.max(0, 100 - progressPercent)}%`;
+      }
     }
 
-    // Update progress text and position
-    if (progressText && progressLineWrap) {
-      progressText.textContent = activeDate;
-      // Calculate translateX based on progress (text follows line)
-      const wrapWidth = progressLineWrap.clientWidth;
-      const padding = 32; // 2rem = 32px padding
-      const maxTranslate = wrapWidth - padding * 2;
-      const translateX = (progressPercent / 100) * maxTranslate;
-      progressText.style.transform = `translateX(${translateX}px)`;
-
-      // Mesure la largeur du texte pour couper correctement la ligne des deux côtés
-      const textRect = progressText.getBoundingClientRect();
-      const textHalf = textRect.width / 2;
-      progressLineWrap.style.setProperty('--textW', textHalf + 'px');
+    // Update progress label uniquement sur #our-story_progress-txt
+    if (progressLineWrap && progressTxt) {
+      progressTxt.textContent = activeDate;
     }
 
     for (let i = 0; i < dots.length; i++) {
@@ -81,4 +79,21 @@ export function setupStoryNav(): void {
   window.addEventListener('scroll', updateActive, { passive: true });
   window.addEventListener('resize', updateActive);
   updateActive();
+
+  // Masquer la barre de progression quand step15 entre dans le viewport
+  const lastSection = document.querySelector<HTMLElement>('.section_story[data-story="step15"]');
+  if (progressContainer && lastSection && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (e.isIntersecting) {
+          progressContainer.classList.add('is-hidden');
+        } else {
+          progressContainer.classList.remove('is-hidden');
+        }
+      },
+      { root: null, threshold: 0, rootMargin: '0px' }
+    );
+    io.observe(lastSection);
+  }
 }
