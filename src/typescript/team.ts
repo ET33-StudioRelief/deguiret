@@ -61,9 +61,15 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
 
   teamItems.forEach((item) => {
     item.addEventListener('click', () => {
-      const willOpen = !item.classList.contains('is-open');
-      closeAll(item);
-      if (willOpen) openItem(item);
+      const isOpen = item.classList.contains('is-open');
+      if (isOpen) {
+        // Si déjà ouvert, le replier sur clic
+        closeItem(item);
+      } else {
+        // Sinon, fermer les autres et ouvrir celui-ci
+        closeAll(item);
+        openItem(item);
+      }
     });
   });
 

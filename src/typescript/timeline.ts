@@ -19,14 +19,22 @@ export function setupTimeline(
     const slides = container.querySelector<HTMLElement>(slidesWrapSelector) || container;
     if (!wrapper || !full || !logo) return;
 
-    const baseTop = logo.offsetTop || 0; // position initiale du logo
+    let baseTop = logo.offsetTop || 0; // position initiale du logo
+
+    const refreshBase = () => {
+      // recalculer les métriques sensibles au viewport (mobile barre d'adresse)
+      baseTop = logo.offsetTop || 0;
+    };
 
     ScrollTrigger.create({
       trigger: slides,
-      start: 'top 80%', // démarre plus tard
-      end: 'bottom 20%',
+      start: 'top 85%', // un peu plus tard sur mobile
+      end: 'bottom 15%',
       scrub: true,
       invalidateOnRefresh: true,
+      fastScrollEnd: true,
+      onRefreshInit: refreshBase,
+      onRefresh: refreshBase,
       onUpdate: (self) => {
         const wrapH = wrapper.clientHeight;
         const logoH = logo.clientHeight || 0;
@@ -43,5 +51,13 @@ export function setupTimeline(
         logo.style.willChange = 'transform';
       },
     });
+
+    // iOS/Android: changer d'orientation / barre d'adresse → refresh
+    window.addEventListener('orientationchange', () => ScrollTrigger.refresh(), { passive: true });
+    window.addEventListener('resize', () => ScrollTrigger.refresh());
+    (window as Window & { visualViewport?: VisualViewport }).visualViewport?.addEventListener?.(
+      'resize',
+      () => ScrollTrigger.refresh()
+    );
   });
 }

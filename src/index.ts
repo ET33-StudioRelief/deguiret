@@ -1,6 +1,6 @@
 import './index.css';
 
-import { setupNavbarHoverImages } from './typescript/component';
+import { setupNavbarHoverImages, setupNavbarVariantOnMobile } from './typescript/component';
 import { setupCustomPiecesProgress } from './typescript/customPieces';
 import {
   galleryTextBlock,
@@ -52,6 +52,8 @@ window.Webflow.push(() => {
   setupWatchesSortToggle();
   setupWatchesRowsInView();
   setupNavbarHoverImages();
+  // Navbar variant (background) on mobile for Who we are
+  setupNavbarVariantOnMobile('/who-we-are', '.navbar_component');
   if (window.location?.pathname.includes('/watches')) {
     swiperProduct();
     sliderCustomCursor('.product-slider_content', '.swiper.is-product');

@@ -12,7 +12,6 @@ export function setupStoryNav(): void {
     progressLineWrap?.querySelector<HTMLElement>('.our-story_progress-line.is-futur') || null;
   const progressTxt =
     progressLineWrap?.querySelector<HTMLElement>('#our-story_progress-txt') || null;
-  // On utilise uniquement #our-story_progress-txt (aucun autre élément nécessaire)
 
   const updateActive = () => {
     const viewportCenter = window.innerHeight / 2;
@@ -80,19 +79,19 @@ export function setupStoryNav(): void {
   window.addEventListener('resize', updateActive);
   updateActive();
 
-  // Masquer la barre de progression quand step15 entre dans le viewport
-  const lastSection = document.querySelector<HTMLElement>('.section_story[data-story="step15"]');
-  if (progressContainer && lastSection && 'IntersectionObserver' in window) {
+  // Masquer la barre de progression ET la sticky-nav quand la section CTA entre dans le viewport
+  const lastSection = document.querySelector<HTMLElement>('.section_cta');
+  const stickyNav = document.querySelector<HTMLElement>('.story_sticky-nav');
+  if ((progressContainer || stickyNav) && lastSection && 'IntersectionObserver' in window) {
     const io = new IntersectionObserver(
       (entries) => {
         const e = entries[0];
-        if (e.isIntersecting) {
-          progressContainer.classList.add('is-hidden');
-        } else {
-          progressContainer.classList.remove('is-hidden');
-        }
+        const hide = e.isIntersecting;
+        if (progressContainer) progressContainer.classList.toggle('is-hidden', hide);
+        if (stickyNav) stickyNav.classList.toggle('is-hidden', hide);
       },
-      { root: null, threshold: 0, rootMargin: '0px' }
+      // Petit décalage: on attend ~15% d'apparition avant de masquer
+      { root: null, threshold: 0.15, rootMargin: '0px 0px -7% 0px' }
     );
     io.observe(lastSection);
   }
