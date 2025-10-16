@@ -16,7 +16,7 @@ import {
 import { setupStoryNav } from './typescript/story';
 import { setupTeamInteractions } from './typescript/team';
 import { setupTimeline } from './typescript/timeline';
-import { setupDarkMode } from './utils/darkMode';
+import { applyStoredThemeEarly, setupDarkMode } from './utils/darkMode';
 import {
   swiperCollection,
   swiperCustomPieces,
@@ -25,6 +25,9 @@ import {
   swiperTestimonial,
 } from './utils/swiper';
 import { faqDropdown, setupScrollTop, sliderCustomCursor, svgComponent } from './utils/ui';
+
+// Appliquer le thème stocké AVANT Webflow pour éviter le flash
+applyStoredThemeEarly();
 
 window.Webflow ||= [];
 window.Webflow.push(() => {

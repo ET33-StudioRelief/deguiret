@@ -1,5 +1,48 @@
+/** Utilitaires pour gérer le thème avec les cookies. */
+
+const THEME_COOKIE_NAME = 'theme';
+const COOKIE_MAX_AGE = 31536000; // 1 an en secondes
+
 /**
- * Dark mode toggle: adds/removes 'body-dark-mode' class on <body>
+ * Lit le thème depuis le cookie, sinon préférence système.
+ */
+function getStoredTheme(): 'dark' | 'light' {
+  const cookieValue = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith(`${THEME_COOKIE_NAME}=`))
+    ?.split('=')[1];
+
+  if (cookieValue === 'dark' || cookieValue === 'light') {
+    return cookieValue;
+  }
+
+  // Fallback: préférence système
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+/**
+ * Définit le cookie de thème avec une durée de 1 an.
+ */
+function setThemeCookie(theme: 'dark' | 'light'): void {
+  document.cookie = `${THEME_COOKIE_NAME}=${theme}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`;
+}
+
+/**
+ * Applique le thème stocké le plus tôt possible, avant le rendu Webflow.
+ * À appeler AVANT window.Webflow.push().
+ */
+export function applyStoredThemeEarly(): void {
+  const theme = getStoredTheme();
+  if (theme === 'dark') {
+    document.body.classList.add('body-dark-mode');
+  } else {
+    document.body.classList.remove('body-dark-mode');
+  }
+}
+
+/**
+ * Active les boutons de switch de thème et persiste le choix en cookie.
+ * À appeler dans setupDarkMode() depuis index.ts.
  */
 export function setupDarkMode(): void {
   const lightBtn = document.getElementById('light-mode');
@@ -9,20 +52,11 @@ export function setupDarkMode(): void {
 
   lightBtn.addEventListener('click', () => {
     document.body.classList.remove('body-dark-mode');
-    localStorage.setItem('theme', 'light');
+    setThemeCookie('light');
   });
 
   darkBtn.addEventListener('click', () => {
     document.body.classList.add('body-dark-mode');
-    localStorage.setItem('theme', 'dark');
+    setThemeCookie('dark');
   });
-
-  // Initialize from localStorage or system preference
-  const stored = localStorage.getItem('theme');
-  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const theme = stored || (systemPrefersDark ? 'dark' : 'light');
-
-  if (theme === 'dark') {
-    document.body.classList.add('body-dark-mode');
-  }
 }

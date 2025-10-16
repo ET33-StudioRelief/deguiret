@@ -12,11 +12,16 @@
   width: 0.5rem;
   height: 0.5rem;
   aspect-ratio: 1 / 1;
-  background-color: var(--surface-tertiary, #16151d);
+  background-color: var(--_brand---background--tertiary);
 }
-/* Our Story: empêcher le retour à la ligne sur le libellé de date */
-#our-story_progress-txt {
-  white-space: nowrap;
+/* Story navigation dots - active state */
+.story_sticky-nav_dot.is-active {
+  width: 1rem;
+  height: 1rem;
+  padding-top: var(--_responsive---margin--padding--spacer--gap--xxsmall);
+  padding-right: var(--_responsive---margin--padding--spacer--gap--xxsmall);
+  padding-bottom: var(--_responsive---margin--padding--spacer--gap--xxsmall);
+  padding-left: var(--_responsive---margin--padding--spacer--gap--xxsmall);
 }
 
 /* Hide progress container when last step is visible */
@@ -25,11 +30,27 @@
   pointer-events: none;
   transition: opacity 200ms ease-in-out;
 }
-
 /* Lissage visuel de la progression */
 .our-story_progress-line,
 .our-story_progress-line.is-futur {
   transition:
     width 260ms ease,
     left 260ms ease;
+}
+
+/* Apparition des dessins dans chaque section story */
+.story_shadow-img {
+  opacity: 0.5; /* ne part pas de 0% */
+  transition: opacity 400ms ease-in-out;
+}
+.section_story.is-inview .story_shadow-img {
+  opacity: 1;
+}
+.story_drawing-img {
+  opacity: 0;
+  transition: opacity 800ms ease-in-out;
+}
+.section_story.is-inview .story_drawing-img {
+  opacity: 1;
+  transition-delay: 200ms; /* apparaît légèrement après le shadow */
 }
