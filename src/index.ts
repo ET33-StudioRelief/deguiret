@@ -58,18 +58,7 @@ window.Webflow.push(() => {
   setupWatchesViewToggle();
   setupWatchesSortToggle();
   setupWatchesRowsInView();
-
-  // Navbar images: n’activer que ≥ 992px
-  const mqlDesktop = window.matchMedia('(min-width: 992px)');
-  let navbarImagesInited = false;
-  const tryInitNavbarImages = () => {
-    if (!navbarImagesInited && mqlDesktop.matches) {
-      setupNavbarHoverImages();
-      navbarImagesInited = true;
-    }
-  };
-  tryInitNavbarImages();
-  mqlDesktop.addEventListener?.('change', tryInitNavbarImages);
+  setupNavbarHoverImages();
 
   // Navbar variant (background) on mobile for Who we are
   setupNavbarVariantOnMobile('/who-we-are', '.navbar_component');
