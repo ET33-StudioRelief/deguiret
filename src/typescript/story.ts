@@ -1,6 +1,7 @@
 export function setupStoryNav(): void {
   const dots = [...document.querySelectorAll<HTMLElement>('.story_sticky-nav_dot[data-story]')];
   const sections = [...document.querySelectorAll<HTMLElement>('.section_story[data-story]')];
+  const allStorySections = [...document.querySelectorAll<HTMLElement>('.section_story')];
   const progressLineWrap = document.querySelector<HTMLElement>('.our-story_progress-line-wrap');
   const progressContainer = document.querySelector<HTMLElement>('.our-story_progress-date');
 
@@ -78,6 +79,21 @@ export function setupStoryNav(): void {
   window.addEventListener('scroll', updateActive, { passive: true });
   window.addEventListener('resize', updateActive);
   updateActive();
+
+  // Fade in/out des dessins sur chaque section générique
+  if (allStorySections.length && 'IntersectionObserver' in window) {
+    const ioSections = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const sec = entry.target as HTMLElement;
+          sec.classList.toggle('is-inview', entry.isIntersecting);
+        }
+      },
+      // Déclenche plus tard dans le viewport (60% visible)
+      { root: null, threshold: 0.6, rootMargin: '0px 0px -1% 0px' }
+    );
+    for (const sec of allStorySections) ioSections.observe(sec);
+  }
 
   // 1) Masquer uniquement our-story_progress-date quand step15 entre dans le viewport
   const progressHideTarget = document.querySelector<HTMLElement>(
