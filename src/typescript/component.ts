@@ -119,3 +119,52 @@ export function setupNavbarVariantOnMobile(
   apply();
   mql.addEventListener?.('change', apply);
 }
+
+export function setupNavbarAutoContrast(
+  navbarSelector = '.navbar_light-wrapper',
+  contrastSelector = '[data-contrast="dark"]',
+  navbarContrastClass = 'is-contrast'
+): void {
+  const navbar = document.querySelector<HTMLElement>(navbarSelector);
+  if (!navbar) return;
+
+  // Ne rien faire si la navbar est une variante Webflow
+  const navbarComponent = document.querySelector('.navbar_component');
+  if (
+    navbarComponent &&
+    navbarComponent.className.split(' ').some((c) => c.startsWith('w-variant-'))
+  ) {
+    return;
+  }
+
+  let ticking = false;
+  const evaluate = () => {
+    ticking = false;
+    const rect = navbar.getBoundingClientRect();
+    const sampleX = Math.max(0, Math.min(window.innerWidth - 1, window.innerWidth / 2));
+    const sampleY = Math.max(0, Math.min(window.innerHeight - 1, rect.top + rect.height / 2));
+
+    const els = document.elementsFromPoint(sampleX, sampleY) as HTMLElement[];
+    const hit = els.some(
+      (el) => el !== navbar && (el.matches(contrastSelector) || !!el.closest(contrastSelector))
+    );
+    navbar.classList.toggle(navbarContrastClass, hit);
+  };
+
+  const onScroll = () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(evaluate);
+    }
+  };
+  const onResize = () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(evaluate);
+    }
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onResize);
+  evaluate();
+}

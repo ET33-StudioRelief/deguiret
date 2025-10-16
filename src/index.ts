@@ -1,6 +1,10 @@
 import './index.css';
 
-import { setupNavbarHoverImages, setupNavbarVariantOnMobile } from './typescript/component';
+import {
+  setupNavbarAutoContrast,
+  setupNavbarHoverImages,
+  setupNavbarVariantOnMobile,
+} from './typescript/component';
 import { setupCustomPiecesProgress } from './typescript/customPieces';
 import {
   galleryTextBlock,
@@ -54,9 +58,23 @@ window.Webflow.push(() => {
   setupWatchesViewToggle();
   setupWatchesSortToggle();
   setupWatchesRowsInView();
-  setupNavbarHoverImages();
+
+  // Navbar images: n’activer que ≥ 992px
+  const mqlDesktop = window.matchMedia('(min-width: 992px)');
+  let navbarImagesInited = false;
+  const tryInitNavbarImages = () => {
+    if (!navbarImagesInited && mqlDesktop.matches) {
+      setupNavbarHoverImages();
+      navbarImagesInited = true;
+    }
+  };
+  tryInitNavbarImages();
+  mqlDesktop.addEventListener?.('change', tryInitNavbarImages);
+
   // Navbar variant (background) on mobile for Who we are
   setupNavbarVariantOnMobile('/who-we-are', '.navbar_component');
+  // Auto-contraste de la navbar selon le fond sous elle
+  setupNavbarAutoContrast('.navbar_light-wrapper');
   if (window.location?.pathname.includes('/watches')) {
     swiperProduct();
     sliderCustomCursor('.product-slider_content', '.swiper.is-product');
