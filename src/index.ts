@@ -11,6 +11,7 @@ import { setupCustomPiecesProgress } from './typescript/customPieces';
 import {
   galleryTextBlock,
   setupWatchesFloat,
+  setupWatchesGridMobile,
   setupWatchesRowsInView,
   setupWatchesSortToggle,
   setupWatchesViewToggle,
@@ -67,6 +68,8 @@ window.Webflow.push(() => {
   setupWatchesSortToggle();
   setupWatchesRowsInView();
   setupWatchesFloat('.watches_gallery_item-wrap');
+  // Mobile grid card behaviour: first tap reveals text
+  setupWatchesGridMobile();
   setupNavbarHoverImages();
 
   // Navbar variant (background) on mobile for Who we are

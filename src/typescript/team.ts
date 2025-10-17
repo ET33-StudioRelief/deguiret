@@ -6,10 +6,10 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
   const teamItems = Array.from(document.querySelectorAll<HTMLElement>('.team_item'));
   if (teamItems.length === 0) return;
 
-  const centerInViewport = (el: HTMLElement) => {
+  const centerInViewport = (el: HTMLElement, behavior: ScrollBehavior = 'smooth') => {
     const rect = el.getBoundingClientRect();
     const target = window.scrollY + rect.top + rect.height / 2 - (window.innerHeight || 0) / 2;
-    window.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+    window.scrollTo({ top: Math.max(0, target), behavior });
   };
 
   const getContentElements = (container: HTMLElement): HTMLElement[] => {
@@ -21,7 +21,20 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
   const openItem = (item: HTMLElement) => {
     item.classList.add('is-open');
     const contents = getContentElements(item);
-    let didCenter = false;
+    // Centre pendant l'ouverture: une fois en smooth, puis ajuste en "auto" jusqu'à la fin
+    const firstContent = contents[0];
+    const durationMs = firstContent
+      ? Math.max(200, (parseFloat(getComputedStyle(firstContent).transitionDuration) || 0) * 1000)
+      : 300;
+    const endAt = performance.now() + durationMs;
+    centerInViewport(item, 'smooth');
+    const follow = () => {
+      if (performance.now() < endAt) {
+        centerInViewport(item, 'auto');
+        requestAnimationFrame(follow);
+      }
+    };
+    requestAnimationFrame(follow);
     contents.forEach((el) => {
       // Mesure la hauteur naturelle
       const target = el.scrollHeight;
@@ -34,11 +47,6 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
         if (ev.propertyName === 'max-height') {
           el.style.maxHeight = 'none';
           el.removeEventListener('transitionend', onEnd);
-          // Centre l'item dans le viewport une seule fois après l'ouverture
-          if (!didCenter) {
-            didCenter = true;
-            centerInViewport(item);
-          }
         }
       };
       el.addEventListener('transitionend', onEnd);

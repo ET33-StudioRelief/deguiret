@@ -96,3 +96,30 @@
   font-size: var(--_responsive---font-size--text-medium);
   font-weight: var(--_typography---weight--medium);
 }
+/* Navbar theme icons (light/dark mode) */
+/* États par défaut (mode clair) */
+.navbar_light-wrapper .light-mode-on {
+  display: block;
+}
+.navbar_light-wrapper .light-mode-off {
+  display: none;
+}
+.navbar_dark-wrapper .dark-mode-off {
+  display: block;
+}
+.navbar_dark-wrapper .dark-mode-on {
+  display: none;
+}
+/* Basculer quand le dark mode est actif */
+.body-dark-mode .navbar_light-wrapper .light-mode-on {
+  display: none !important;
+}
+.body-dark-mode .navbar_light-wrapper .light-mode-off {
+  display: block !important;
+}
+.body-dark-mode .navbar_dark-wrapper .dark-mode-off {
+  display: none !important;
+}
+.body-dark-mode .navbar_dark-wrapper .dark-mode-on {
+  display: block !important;
+}
