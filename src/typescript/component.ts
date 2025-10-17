@@ -176,6 +176,10 @@ export function setupLayout2ColMoveUp(
   maxShiftPx = 200,
   baseOffsetPx = 200
 ): void {
+  // Actif uniquement au-dessus de 992px
+  const mqlDesktop = window.matchMedia('(min-width: 992px)');
+  if (!mqlDesktop.matches) return;
+
   const sections = Array.from(document.querySelectorAll<HTMLElement>(sectionSelector));
   if (sections.length === 0) return;
 

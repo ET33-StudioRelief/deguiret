@@ -103,6 +103,33 @@
   }
 }
 
+/* GRID - Mobile: text revealed with smooth anim on .is-open */
+@media (max-width: 991px) {
+  .watches_grid_card .watches_grid_text-wrap {
+    display: flex;
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 240ms ease,
+      transform 240ms ease;
+    pointer-events: none;
+  }
+  .watches_grid_card.is-open .watches_grid_text-wrap {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+}
+
+/* GRID */
+@media (min-width: 480px) and (max-width: 765px) {
+  .watches_grid_card,
+  .watches_grid_img-wrap,
+  .watches_grid_text-wrap {
+    width: 100%;
+  }
+}
+
 /* VIEW TOGGLE - smooth reveal/hide for gallery/grid wrappers */
 .watches_gallery_wrapper,
 .watches_grid_wrapper {

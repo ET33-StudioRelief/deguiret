@@ -226,3 +226,32 @@ export function setupWatchesSortToggle(
     window.dispatchEvent(new CustomEvent('watches:view-changed'));
   });
 }
+
+// Mobile behaviour for grid cards: first tap opens text, second tap follows link
+export function setupWatchesGridMobile(
+  cardSelector = '.watches_grid_card',
+  textSelector = '.watches_grid_text-wrap',
+  minWidthDesktop = 992
+): void {
+  const mql = window.matchMedia(`(min-width: ${minWidthDesktop}px)`);
+  if (mql.matches) return; // desktop: hover CSS déjà géré
+
+  const cards = Array.from(document.querySelectorAll<HTMLAnchorElement>(cardSelector));
+  if (cards.length === 0) return;
+
+  cards.forEach((card) => {
+    let opened = false;
+    card.addEventListener('click', (ev) => {
+      if (!opened) {
+        ev.preventDefault();
+        card.classList.add('is-open');
+        const txt = card.querySelector<HTMLElement>(textSelector);
+        if (txt) txt.style.display = '';
+        opened = true;
+      } else {
+        // second tap: follow link (let browser navigate)
+        opened = false;
+      }
+    });
+  });
+}

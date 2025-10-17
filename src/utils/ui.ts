@@ -165,23 +165,11 @@ export function setupButtonHoverCursor(buttonSelector = '.button', sizePx = 24):
   cursor.style.display = 'none';
   // SVG inline pour blur + clip, garde la couleur via CSS variables
   cursor.innerHTML = `
-<svg xmlns="http://www.w3.org/2000/svg" width="${sizePx}" height="${sizePx}" viewBox="0 0 24 24" fill="none">
-  <foreignObject x="0" y="0" width="24" height="24">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(0.5px);clip-path:url(#bgblur_0_2760_4819_clip_path);height:100%;width:100%"></div>
-  </foreignObject>
-  <g filter="url(#filter0_f_2760_4819)" data-figma-bg-blur-radius="1">
-    <circle cx="12" cy="12" r="10" fill="var(--_brand---background--button-hover)" fill-opacity="0.75"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+  <foreignObject x="-2" y="-2" width="20" height="20"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(1px);clip-path:url(#bgblur_0_2824_4482_clip_path);height:100%;width:100%"></div></foreignObject><circle data-figma-bg-blur-radius="2" cx="8" cy="8" r="7.75" fill="#F4F5F0" fill-opacity="0.5" stroke="#727085" stroke-width="0.5"/>
   <defs>
-    <filter id="filter0_f_2760_4819" x="0" y="0" width="24" height="24" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
-      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
-      <feGaussianBlur stdDeviation="1" result="effect1_foregroundBlur_2760_4819"/>
-    </filter>
-    <clipPath id="bgblur_0_2760_4819_clip_path" transform="translate(0 0)">
-      <circle cx="12" cy="12" r="10"/>
-    </clipPath>
-  </defs>
+    <clipPath id="bgblur_0_2824_4482_clip_path" transform="translate(2 2)"><circle cx="8" cy="8" r="7.75"/>
+  </clipPath></defs>
 </svg>`;
   document.body.appendChild(cursor);
 
