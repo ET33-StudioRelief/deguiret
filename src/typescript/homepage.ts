@@ -140,6 +140,22 @@ export function setupWatchesRowsInView(
   window.addEventListener('watches:view-changed', onViewChanged);
 }
 
+export function setupWatchesFloat(selector = '.watches_gallery_item-wrap', amp = -50): void {
+  const els = Array.from(document.querySelectorAll<HTMLElement>(selector));
+  const upd = () => {
+    const vh = innerHeight,
+      vc = vh / 2;
+    els.forEach((el) => {
+      const r = el.getBoundingClientRect(),
+        c = r.top + r.height / 2;
+      el.style.transform = `translateY(${((vc - c) / vh) * amp}px)`;
+    });
+  };
+  addEventListener('scroll', () => requestAnimationFrame(upd), { passive: true });
+  addEventListener('resize', () => requestAnimationFrame(upd));
+  upd();
+}
+
 // Sort order toggle for watches collection (oldest/newest)
 export function setupWatchesSortToggle(
   oldestBtn = '#show-oldest-watches',

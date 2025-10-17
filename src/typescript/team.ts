@@ -6,6 +6,12 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
   const teamItems = Array.from(document.querySelectorAll<HTMLElement>('.team_item'));
   if (teamItems.length === 0) return;
 
+  const centerInViewport = (el: HTMLElement) => {
+    const rect = el.getBoundingClientRect();
+    const target = window.scrollY + rect.top + rect.height / 2 - (window.innerHeight || 0) / 2;
+    window.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+  };
+
   const getContentElements = (container: HTMLElement): HTMLElement[] => {
     return Array.from(
       container.querySelectorAll<HTMLElement>('.team_hide-content, .team_right-col')
@@ -15,6 +21,7 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
   const openItem = (item: HTMLElement) => {
     item.classList.add('is-open');
     const contents = getContentElements(item);
+    let didCenter = false;
     contents.forEach((el) => {
       // Mesure la hauteur naturelle
       const target = el.scrollHeight;
@@ -27,6 +34,11 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
         if (ev.propertyName === 'max-height') {
           el.style.maxHeight = 'none';
           el.removeEventListener('transitionend', onEnd);
+          // Centre l'item dans le viewport une seule fois après l'ouverture
+          if (!didCenter) {
+            didCenter = true;
+            centerInViewport(item);
+          }
         }
       };
       el.addEventListener('transitionend', onEnd);

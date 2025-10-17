@@ -7,13 +7,11 @@
   min-height: 0px;
   background-color: var(--_brand---background--primary);
 }
-/*.navbar_img-wrapper{
-  position: absolute;
-  inset: auto 0% 0% -10%;
-  width: 53rem;
-  height: 18rem;
-  min-height: 18rem;
-}*/
+
+/* Dark mode: test couleur navbar */
+.body-dark-mode .navbar_dark-wrapper {
+  color: var(--_brand---background--primary);
+}
 
 /*Scroll TO Top Button*/
 .cc--slideup-button {
@@ -82,4 +80,19 @@
   box-sizing: border-box;
   color: inherit;
   font: inherit;
+}
+
+.footer_link-block:hover .footer_link-svg {
+  width: 1rem;
+  opacity: 1;
+}
+
+/* Forms - radios (Webflow) */
+.w-form-formradioinput.w-radio-input {
+  accent-color: #000 !important; /* noir quand coché */
+}
+.footer_form-input.w-input {
+  font-family: var(--_typography---font--body);
+  font-size: var(--_responsive---font-size--text-medium);
+  font-weight: var(--_typography---weight--medium);
 }
