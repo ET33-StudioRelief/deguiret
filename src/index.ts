@@ -1,6 +1,8 @@
 import './index.css';
 
 import {
+  ctaParallax,
+  setupLayout2ColMoveUp,
   setupNavbarAutoContrast,
   setupNavbarHoverImages,
   setupNavbarVariantOnMobile,
@@ -8,6 +10,7 @@ import {
 import { setupCustomPiecesProgress } from './typescript/customPieces';
 import {
   galleryTextBlock,
+  setupWatchesFloat,
   setupWatchesRowsInView,
   setupWatchesSortToggle,
   setupWatchesViewToggle,
@@ -53,11 +56,11 @@ window.Webflow.push(() => {
   if (window.location?.pathname.includes('/our-story')) {
     setupStoryNav();
   }
-  // Shared on homepage/other pages where the gallery appears
   galleryTextBlock();
   setupWatchesViewToggle();
   setupWatchesSortToggle();
   setupWatchesRowsInView();
+  setupWatchesFloat('.watches_gallery_item-wrap');
   setupNavbarHoverImages();
 
   // Navbar variant (background) on mobile for Who we are
@@ -73,11 +76,10 @@ window.Webflow.push(() => {
     setupProductFeaturesTable();
     setupProductPrevNext('#show-prev-product', '#show-next-product', '.w-dyn-items .w-dyn-item a');
   }
-  // Dark mode toggle
   setupDarkMode();
-  // FAQ accordion
   faqDropdown('.faq_question');
-  // Scroll-to-top button
   setupScrollTop('scroll-top', 200);
   svgComponent();
+  ctaParallax();
+  setupLayout2ColMoveUp();
 });
