@@ -6,10 +6,14 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
   const teamItems = Array.from(document.querySelectorAll<HTMLElement>('.team_item'));
   if (teamItems.length === 0) return;
 
-  const centerInViewport = (el: HTMLElement, behavior: ScrollBehavior = 'smooth') => {
+  // Centrage précis avec compensation de la navbar sticky
+  const centerAccurate = (el: HTMLElement, behavior: ScrollBehavior = 'smooth') => {
     const rect = el.getBoundingClientRect();
-    const target = window.scrollY + rect.top + rect.height / 2 - (window.innerHeight || 0) / 2;
-    window.scrollTo({ top: Math.max(0, target), behavior });
+    const navbar = document.querySelector<HTMLElement>('.navbar_component');
+    const headerH = navbar ? navbar.clientHeight : 0;
+    const viewport = window.innerHeight || 0;
+    const target = window.scrollY + rect.top + rect.height / 2 - viewport / 2 + headerH / 2;
+    window.scrollTo({ top: Math.max(0, Math.round(target)), behavior });
   };
 
   const getContentElements = (container: HTMLElement): HTMLElement[] => {
@@ -20,21 +24,9 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
 
   const openItem = (item: HTMLElement) => {
     item.classList.add('is-open');
+    // Centrer immédiatement avec compensation de navbar, puis affiner après un court délai
+    centerAccurate(item, 'smooth');
     const contents = getContentElements(item);
-    // Centre pendant l'ouverture: une fois en smooth, puis ajuste en "auto" jusqu'à la fin
-    const firstContent = contents[0];
-    const durationMs = firstContent
-      ? Math.max(200, (parseFloat(getComputedStyle(firstContent).transitionDuration) || 0) * 1000)
-      : 300;
-    const endAt = performance.now() + durationMs;
-    centerInViewport(item, 'smooth');
-    const follow = () => {
-      if (performance.now() < endAt) {
-        centerInViewport(item, 'auto');
-        requestAnimationFrame(follow);
-      }
-    };
-    requestAnimationFrame(follow);
     contents.forEach((el) => {
       // Mesure la hauteur naturelle
       const target = el.scrollHeight;
@@ -51,6 +43,8 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
       };
       el.addEventListener('transitionend', onEnd);
     });
+    // Affinage: re-centre brièvement pendant l'animation pour compenser la variation de hauteur
+    setTimeout(() => centerAccurate(item, 'auto'), 160);
   };
 
   const closeItem = (item: HTMLElement) => {
