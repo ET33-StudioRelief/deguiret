@@ -1,5 +1,5 @@
 import Swiper from 'swiper';
-import { Autoplay, Controller, EffectFade, Pagination, Thumbs } from 'swiper/modules';
+import { Autoplay, Controller, Pagination, Thumbs } from 'swiper/modules';
 
 export function swiperStep() {
   // Guard: init only when the target slider exists on the page
@@ -160,97 +160,74 @@ export function swiperProduct(): void {
   });
 }
 
-// Collection slider (fond + avant-plan synchronisés)
+// Collection slider: 5 slides in viewport, 80px spacing, loop
 export function swiperCollection(): void {
-  const wrappers = Array.from(document.querySelectorAll<HTMLElement>('.collection-slider_content'));
-  if (wrappers.length === 0) return;
+  const elements = Array.from(document.querySelectorAll<HTMLElement>('.swiper.is-collection'));
+  if (elements.length === 0) return;
 
-  wrappers.forEach((wrap) => {
-    const bgEl = wrap.querySelector<HTMLElement>('.swiper.is-bg-collection');
-    const frontEl = wrap.querySelector<HTMLElement>('.swiper.is-front-collection');
-    if (!bgEl || !frontEl) return;
-    if (wrap.dataset.collectionInited === 'true') return;
-
-    const bgSwiper = new Swiper(bgEl, {
-      modules: [Controller, EffectFade],
-      slidesPerView: 1,
-      loop: true,
-      speed: 700,
-      effect: 'fade',
-      fadeEffect: { crossFade: true },
-      allowTouchMove: false,
-    });
-
-    let lastSyncedRealIndex = -1;
-
-    const frontSwiper = new Swiper(frontEl, {
-      modules: [Controller],
-      loop: true,
-      centeredSlides: true,
+  elements.forEach((el) => {
+    if (el.dataset.swiperInitialized === 'true') return;
+    new Swiper(el, {
       slidesPerView: 5,
-      spaceBetween: 120,
-      speed: 700,
+      spaceBetween: 80,
+      loop: true,
+      speed: 600,
+      allowTouchMove: true,
+      watchOverflow: true,
       watchSlidesProgress: true,
-      loopAdditionalSlides: 4,
+      // Responsive defaults (optional)
+      breakpoints: {
+        0: { slidesPerView: 1.2, spaceBetween: 16 },
+        480: { slidesPerView: 2, spaceBetween: 24 },
+        768: { spaceBetween: 40 },
+        992: { slidesPerView: 3, spaceBetween: 60 },
+        1200: { slidesPerView: 5, spaceBetween: 80 },
+      },
       on: {
-        setTranslate(s: Swiper) {
-          type SlideWithProgress = HTMLElement & {
-            progress?: number;
-            swiperSlideProgress?: number;
-          };
-          let nearestRealIndex = s.realIndex;
-          let nearestDistance = Number.POSITIVE_INFINITY;
-
-          s.slides.forEach((slideEl) => {
-            const slide = slideEl as SlideWithProgress;
-            const rawProgress = slide.progress ?? slide.swiperSlideProgress ?? 0;
-            const p = Math.min(Math.abs(rawProgress), 2);
-            const direction = rawProgress === 0 ? 0 : rawProgress > 0 ? 1 : -1;
-
-            // Quantification par niveaux (0 = centre, 1 = adjacents, 2 = extrêmes)
-            const rank = Math.min(2, Math.round(p));
-            const scaleSteps = [1, 0.78, 0.58];
-            const opacitySteps = [1, 0.6, 0.35];
-            const rotSteps = [0, 14, 22]; // deg
-
-            const scale = scaleSteps[rank];
-            const opacity = opacitySteps[rank];
-            // Courbe plus circulaire (cosinus), très prononcée aux extrémités
-            const yMax = 120;
-            const zMax = 400;
-            const t = Math.max(-1, Math.min(1, rawProgress));
-            const circular = 1 - Math.cos(Math.abs(t) * Math.PI * 0.5); // 0→1
-            const translateY = -yMax * Math.pow(circular, 1.1);
-            const translateZ = -zMax * Math.pow(circular, 1);
-            const rotateY = rotSteps[rank] * direction;
-
-            slide.style.transform = `translateZ(${translateZ}px) translateY(${translateY}px) rotateY(${rotateY}deg) scale(${scale})`;
-            slide.style.opacity = `${opacity}`;
-            slide.style.zIndex = String(1000 - Math.round(p * 100));
-
-            const dist = Math.abs(rawProgress);
-            if (dist < nearestDistance) {
-              nearestDistance = dist;
-              const attr = (slide as HTMLElement).getAttribute('data-swiper-slide-index');
-              nearestRealIndex = attr ? Number(attr) : s.realIndex;
-            }
-          });
-
-          if (nearestRealIndex !== lastSyncedRealIndex) {
-            bgSwiper.slideToLoop(nearestRealIndex, 0, false);
-            lastSyncedRealIndex = nearestRealIndex;
-          }
+        // Mise à jour continue de l'échelle (effet lissé)
+        afterInit() {
+          updateCollectionScale(el);
+        },
+        setTranslate() {
+          updateCollectionScale(el);
+        },
+        slideChange() {
+          updateCollectionScale(el);
+        },
+        resize() {
+          updateCollectionScale(el);
         },
       },
     });
+    el.dataset.swiperInitialized = 'true';
+  });
+}
 
-    // Front -> BG (unidirectionnel) pour que le BG colle à la slide centrée
-    frontSwiper.controller.control = bgSwiper;
-    frontSwiper.on('slideChange', () => {
-      bgSwiper.slideToLoop(frontSwiper.realIndex, 0, false);
-      lastSyncedRealIndex = frontSwiper.realIndex;
-    });
+function updateCollectionScale(root: HTMLElement): void {
+  const slides = Array.from(root.querySelectorAll<HTMLElement>('.swiper-slide'));
+  if (slides.length === 0) return;
+  // Centre d'ancrage = centre du slide visible du milieu (plus robuste que le centre du conteneur)
+  const visibles = Array.from(
+    root.querySelectorAll<HTMLElement>('.swiper-slide.swiper-slide-visible')
+  );
+  const anchor = visibles[Math.floor(visibles.length / 2)] || slides[0];
+  const anchorRect = anchor.getBoundingClientRect();
+  const anchorCenter = anchorRect.left + anchorRect.width / 2;
+  // Marque la slide centrale
+  slides.forEach((s) => s.classList.remove('is-center'));
+  anchor.classList.add('is-center');
 
-    wrap.dataset.collectionInited = 'true';
+  // largeur moyenne (approx) pour normaliser la distance en nombre de slides)
+  const avgWidth =
+    slides.map((s) => s.offsetWidth).reduce((a, b) => a + b, 0) / (slides.length || 1) || 1;
+
+  slides.forEach((slide) => {
+    const card = (slide.querySelector('.collection-slider_card') as HTMLElement) || slide;
+    const rect = slide.getBoundingClientRect();
+    const slideCenter = rect.left + rect.width / 2;
+    const dSlides = Math.abs(anchorCenter - slideCenter) / avgWidth; // 0 au centre, ~1 pour voisin, ~2 pour suivant
+    const scale = Math.max(0.4, 1 - 0.3 * dSlides);
+    card.style.transformOrigin = 'center center';
+    card.style.transform = `scale(${scale})`;
   });
 }

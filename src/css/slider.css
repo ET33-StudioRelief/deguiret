@@ -32,3 +32,58 @@
   width: 8.75rem !important;
   opacity: 1 !important;
 }
+
+/* Collection slider - fade aux extrémités (desktop uniquement) */
+@media (min-width: 992px) {
+  .collection-slider_content {
+    position: relative;
+    --edge-fade-size: 500px; /* largeur du dégradé aux bords */
+    --edge-fade-color: var(--_brand---background--primary);
+  }
+  .collection-slider_content::before,
+  .collection-slider_content::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: var(--edge-fade-size);
+    pointer-events: none;
+    z-index: 10;
+  }
+  .collection-slider_content::before {
+    left: 0;
+    background: linear-gradient(to right, var(--edge-fade-color), rgba(0, 0, 0, 0));
+  }
+  .collection-slider_content::after {
+    right: 0;
+    background: linear-gradient(to left, var(--edge-fade-color), rgba(0, 0, 0, 0));
+  }
+}
+
+/* Collection slider - échelle des slides selon proximité du centre */
+.swiper.is-collection .swiper-slide .collection-slider_card {
+  transform-origin: center center;
+  transition:
+    transform 800ms ease,
+    opacity 240ms ease;
+}
+.swiper.is-collection .swiper-slide.is-center {
+  transform: scale(1);
+  opacity: 1;
+}
+/* Afficher le nom seulement sur la slide centrée */
+.swiper.is-collection .swiper-slide [id='name-slider-collection'] {
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.swiper.is-collection .swiper-slide.is-center [id='name-slider-collection'] {
+  opacity: 1;
+}
+.swiper.is-collection .swiper-slide.is-near {
+  transform: scale(0.7); /* -30% */
+  opacity: 0.9;
+}
+.swiper.is-collection .swiper-slide.is-far {
+  transform: scale(0.4); /* -60% */
+  opacity: 0.8;
+}

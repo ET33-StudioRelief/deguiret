@@ -30,7 +30,11 @@ export function svgComponent() {
 }
 
 /**Custom cursor for sliders - supports multiple wrappers*/
-export function sliderCustomCursor(wrapperSelector: string, swiperSelector: string): void {
+export function sliderCustomCursor(
+  wrapperSelector: string,
+  swiperSelector: string,
+  excludeSelector?: string
+): void {
   const wrappers = Array.from(document.querySelectorAll<HTMLElement>(wrapperSelector));
   if (wrappers.length === 0) return;
 
@@ -97,6 +101,13 @@ export function sliderCustomCursor(wrapperSelector: string, swiperSelector: stri
     };
 
     wrapper.addEventListener('mousemove', (ev) => {
+      // Désactiver le curseur custom si on survole un élément exclu
+      if (excludeSelector && (ev.target as HTMLElement)?.closest(excludeSelector)) {
+        wrapper.style.cursor = '';
+        left.style.visibility = 'hidden';
+        right.style.visibility = 'hidden';
+        return;
+      }
       const rect = wrapper.getBoundingClientRect();
       const x = ev.clientX - rect.left;
       const y = ev.clientY - rect.top;
@@ -116,6 +127,9 @@ export function sliderCustomCursor(wrapperSelector: string, swiperSelector: stri
     });
 
     wrapper.addEventListener('click', (ev) => {
+      if (excludeSelector && (ev.target as HTMLElement)?.closest(excludeSelector)) {
+        return; // ne pas déclencher la nav du slider si exclu
+      }
       const swiper = getSwiper();
       if (!swiper) return;
       const rect = wrapper.getBoundingClientRect();
