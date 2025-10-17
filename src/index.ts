@@ -70,8 +70,12 @@ window.Webflow.push(() => {
   if (window.location?.pathname.includes('/watches')) {
     swiperProduct();
     sliderCustomCursor('.product-slider_content', '.swiper.is-product');
+    sliderCustomCursor(
+      '.collection-slider_content',
+      '.swiper.is-collection',
+      '.collection-slider_card'
+    );
     swiperCollection();
-    sliderCustomCursor('.collection-slider_content', '.swiper.is-front-collection');
     setupProductAccordion();
     setupProductFeaturesTable();
     setupProductPrevNext('#show-prev-product', '#show-next-product', '.w-dyn-items .w-dyn-item a');
