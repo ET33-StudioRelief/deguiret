@@ -144,6 +144,93 @@ export function sliderCustomCursor(
 }
 
 /**
+ * Cursor custom au survol des boutons: remplace le curseur par un rond flouté.
+ * Utilise un overlay fixe pour conserver les variables CSS (couleur).
+ */
+export function setupButtonHoverCursor(buttonSelector = '.button', sizePx = 24): void {
+  const buttons = Array.from(document.querySelectorAll<HTMLElement>(buttonSelector));
+  if (buttons.length === 0) return;
+
+  // Création unique de l'overlay curseur
+  const cursor = document.createElement('div');
+  cursor.setAttribute('aria-hidden', 'true');
+  cursor.style.position = 'fixed';
+  cursor.style.left = '0px';
+  cursor.style.top = '0px';
+  cursor.style.width = `${sizePx}px`;
+  cursor.style.height = `${sizePx}px`;
+  cursor.style.pointerEvents = 'none';
+  cursor.style.transform = 'translate(-50%, -50%)';
+  cursor.style.zIndex = '9999';
+  cursor.style.display = 'none';
+  // SVG inline pour blur + clip, garde la couleur via CSS variables
+  cursor.innerHTML = `
+<svg xmlns="http://www.w3.org/2000/svg" width="${sizePx}" height="${sizePx}" viewBox="0 0 24 24" fill="none">
+  <foreignObject x="0" y="0" width="24" height="24">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(0.5px);clip-path:url(#bgblur_0_2760_4819_clip_path);height:100%;width:100%"></div>
+  </foreignObject>
+  <g filter="url(#filter0_f_2760_4819)" data-figma-bg-blur-radius="1">
+    <circle cx="12" cy="12" r="10" fill="var(--_brand---background--button-hover)" fill-opacity="0.75"/>
+  </g>
+  <defs>
+    <filter id="filter0_f_2760_4819" x="0" y="0" width="24" height="24" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="1" result="effect1_foregroundBlur_2760_4819"/>
+    </filter>
+    <clipPath id="bgblur_0_2760_4819_clip_path" transform="translate(0 0)">
+      <circle cx="12" cy="12" r="10"/>
+    </clipPath>
+  </defs>
+</svg>`;
+  document.body.appendChild(cursor);
+
+  let ticking = false;
+  let visible = false;
+
+  const setPos = (ev: MouseEvent) => {
+    const x = ev.clientX;
+    const y = ev.clientY;
+    (cursor.style as CSSStyleDeclaration).left = `${x}px`;
+    (cursor.style as CSSStyleDeclaration).top = `${y}px`;
+  };
+
+  const onMove = (ev: MouseEvent) => {
+    if (!visible) return;
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        setPos(ev);
+      });
+    }
+  };
+
+  const show = (ev: MouseEvent) => {
+    visible = true;
+    buttons.forEach((b) => {
+      b.style.cursor = 'none';
+    });
+    cursor.style.display = 'block';
+    setPos(ev);
+    window.addEventListener('mousemove', onMove, { passive: true });
+  };
+  const hide = () => {
+    visible = false;
+    buttons.forEach((b) => {
+      b.style.cursor = '';
+    });
+    cursor.style.display = 'none';
+    window.removeEventListener('mousemove', onMove as EventListener);
+  };
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('mouseenter', show as EventListener);
+    btn.addEventListener('mouseleave', hide);
+  });
+}
+
+/**
  * FAQ accordion: click on .faq_question toggles .faq_answer height (smooth animation).
  * Assumes each .faq_question has a sibling or child .faq_answer with height:0 by default.
  */

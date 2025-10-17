@@ -31,7 +31,13 @@ import {
   swiperStep,
   swiperTestimonial,
 } from './utils/swiper';
-import { faqDropdown, setupScrollTop, sliderCustomCursor, svgComponent } from './utils/ui';
+import {
+  faqDropdown,
+  setupButtonHoverCursor,
+  setupScrollTop,
+  sliderCustomCursor,
+  svgComponent,
+} from './utils/ui';
 
 // Appliquer le thème stocké AVANT Webflow pour éviter le flash
 applyStoredThemeEarly();
@@ -86,4 +92,5 @@ window.Webflow.push(() => {
   svgComponent();
   ctaParallax();
   setupLayout2ColMoveUp();
+  setupButtonHoverCursor();
 });

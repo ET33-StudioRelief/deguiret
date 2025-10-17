@@ -14,7 +14,9 @@
   @supports (animation-timeline: view()) {
     [class*='section_']:not([class*='hero']):not([class*='watches']):not(
         [class*='section_step']
-      ):not([class*='section_cta']):not([class*='section_story']) {
+      ):not([class*='section_cta']):not([class*='section_story']):not(
+        [class*='section_nav-product']
+      ) {
       animation-name: fadeIn;
       animation-duration: 200ms;
       animation-timing-function: ease-out;
