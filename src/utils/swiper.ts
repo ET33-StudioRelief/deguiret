@@ -206,6 +206,18 @@ export function swiperCollection(): void {
 function updateCollectionScale(root: HTMLElement): void {
   const slides = Array.from(root.querySelectorAll<HTMLElement>('.swiper-slide'));
   if (slides.length === 0) return;
+  const isWide = typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches;
+
+  // En-dessous de 768px: on neutralise totalement les styles inline + classes
+  if (!isWide) {
+    slides.forEach((slide) => {
+      slide.classList.remove('is-center');
+      const card = (slide.querySelector('.collection-slider_card') as HTMLElement) || slide;
+      card.style.transform = '';
+      card.style.transformOrigin = '';
+    });
+    return;
+  }
   // Centre d'ancrage = centre du slide visible du milieu (plus robuste que le centre du conteneur)
   const visibles = Array.from(
     root.querySelectorAll<HTMLElement>('.swiper-slide.swiper-slide-visible')

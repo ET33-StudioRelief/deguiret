@@ -231,7 +231,7 @@ export function setupLayout2ColMoveUp(
 export function ctaParallax(
   sectionSelector = '.section_cta',
   imgSelector = '.cta_img-bg',
-  amplitudePx = 200
+  amplitudePx = 100
 ): void {
   const section = document.querySelector<HTMLElement>(sectionSelector);
   const bgImg =
