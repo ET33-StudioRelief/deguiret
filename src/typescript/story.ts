@@ -1,9 +1,11 @@
-export function setupStoryNav(): void {
+export function setupStoryTestNav(): void {
   const dots = [...document.querySelectorAll<HTMLElement>('.story_sticky-nav_dot[data-story]')];
-  const sections = [...document.querySelectorAll<HTMLElement>('.section_story[data-story]')];
-  const allStorySections = [...document.querySelectorAll<HTMLElement>('.section_story')];
+  // Dans ton HTML, les étapes sont des .story_step (et non plusieurs .section_story)
+  const sections = [...document.querySelectorAll<HTMLElement>('.story_step[data-story]')];
+  const allStorySections = [...document.querySelectorAll<HTMLElement>('.story_step')];
   const progressLineWrap = document.querySelector<HTMLElement>('.our-story_progress-line-wrap');
   const progressContainer = document.querySelector<HTMLElement>('.our-story_progress-date');
+  const bgImgEl = document.querySelector<HTMLElement>('.story_bg-img');
 
   if (dots.length === 0 || sections.length === 0) return;
 
@@ -13,6 +15,77 @@ export function setupStoryNav(): void {
     progressLineWrap?.querySelector<HTMLElement>('.our-story_progress-line.is-futur') || null;
   const progressTxt =
     progressLineWrap?.querySelector<HTMLElement>('#our-story_progress-txt') || null;
+
+  const getMeta = (step: HTMLElement) => {
+    const id =
+      step.getAttribute('data-story') ||
+      step.querySelector<HTMLElement>('[data-step]')?.getAttribute('data-step') ||
+      '';
+    const date =
+      step.getAttribute('data-date') ||
+      step.querySelector<HTMLElement>('[data-date]')?.getAttribute('data-date') ||
+      '';
+    const bg =
+      step.getAttribute('data-background') ||
+      step.querySelector<HTMLElement>('[data-background]')?.getAttribute('data-background') ||
+      '';
+    return { id, date, bg };
+  };
+
+  // Crossfade pour le background de .story_bg-img
+  let baseLayer: HTMLDivElement | null = null;
+  let overlay: HTMLDivElement | null = null;
+  let currentUrl: string | null = null;
+
+  const ensureLayers = () => {
+    if (!bgImgEl) return;
+    const cs = getComputedStyle(bgImgEl);
+    if (cs.position === 'static') bgImgEl.style.position = 'relative';
+    if (cs.overflow !== 'hidden') bgImgEl.style.overflow = 'hidden';
+    if (!baseLayer) {
+      baseLayer = document.createElement('div');
+      baseLayer.style.position = 'absolute';
+      baseLayer.style.inset = '0';
+      baseLayer.style.backgroundSize = 'cover';
+      baseLayer.style.backgroundPosition = 'center';
+      baseLayer.style.opacity = '1';
+      bgImgEl.appendChild(baseLayer);
+    }
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.style.position = 'absolute';
+      overlay.style.inset = '0';
+      overlay.style.backgroundSize = 'cover';
+      overlay.style.backgroundPosition = 'center';
+      overlay.style.transition = 'opacity 300ms ease';
+      overlay.style.opacity = '0';
+      bgImgEl.appendChild(overlay);
+    }
+  };
+
+  const initBackground = (url: string | null) => {
+    if (!bgImgEl) return;
+    ensureLayers();
+    currentUrl = url || null;
+    if (baseLayer) baseLayer.style.backgroundImage = url ? `url("${url}")` : '';
+  };
+
+  const setBackground = (url: string | null) => {
+    if (!bgImgEl) return;
+    ensureLayers();
+    const targetImg = url ? `url("${url}")` : '';
+    if (currentUrl === targetImg) return;
+    if (!overlay || !baseLayer) return;
+    overlay.style.backgroundImage = targetImg;
+    overlay.style.opacity = '1';
+    const onEnd = () => {
+      overlay?.removeEventListener('transitionend', onEnd);
+      baseLayer!.style.backgroundImage = targetImg;
+      if (overlay) overlay.style.opacity = '0';
+      currentUrl = targetImg;
+    };
+    overlay.addEventListener('transitionend', onEnd);
+  };
 
   const updateActive = () => {
     const viewportCenter = window.innerHeight / 2;
@@ -32,8 +105,9 @@ export function setupStoryNav(): void {
       }
     }
 
-    const activeStory = closestSection?.dataset.story || '';
-    const activeDate = closestSection?.dataset.date || '';
+    const meta = closestSection ? getMeta(closestSection) : { id: '', date: '', bg: '' };
+    const activeStory = meta.id;
+    const activeDate = meta.date;
 
     // Calculate progress percentage (0% to 100%)
     const totalSteps = sections.length;
@@ -57,13 +131,20 @@ export function setupStoryNav(): void {
       progressTxt.textContent = activeDate;
     }
 
+    // Met à jour le background de .story_bg-img en fonction du step visible
+    if (bgImgEl) {
+      // Première initialisation si nécessaire
+      if (currentUrl === null) initBackground(meta.bg || '');
+      if (meta.bg) setBackground(meta.bg);
+    }
+
     for (let i = 0; i < dots.length; i++) {
       const dot = dots[i];
       const dotStory = dot.dataset.story || '';
       const isActive = dotStory === activeStory;
 
       // Trouver l'index de la section correspondante
-      const sectionIndex = sections.findIndex((s) => s.dataset.story === dotStory);
+      const sectionIndex = sections.findIndex((s) => getMeta(s).id === dotStory);
       const isPassed = sectionIndex >= 0 && sectionIndex < closestIndex;
 
       dot.classList.toggle('is-active', isActive);
@@ -97,7 +178,7 @@ export function setupStoryNav(): void {
 
   // 1) Masquer uniquement our-story_progress-date quand step15 entre dans le viewport
   const progressHideTarget = document.querySelector<HTMLElement>(
-    '.section_story[data-story="step15"]'
+    '.story_step[data-story="step15"]'
   );
   if (progressContainer && progressHideTarget && 'IntersectionObserver' in window) {
     const ioProgress = new IntersectionObserver(

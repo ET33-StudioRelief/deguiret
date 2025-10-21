@@ -39,17 +39,16 @@
 }
 
 /* Apparition des dessins dans chaque section story */
+/* Steps (nouvelle structure) */
 .story_shadow-img {
-  opacity: 0.5;
+  opacity: 0;
   transition: opacity 300ms ease-in-out;
 }
-.section_story.is-inview .story_shadow-img {
+.story_step.is-inview .story_shadow-img {
   opacity: 1;
 }
-.story_drawing-img-wrap {
-  opacity: 0;
-}
-.section_story.is-inview .story_drawing-img-wrap {
+
+.story_step.is-inview .story_drawing-img-wrap {
   opacity: 1;
-  transition-delay: 200ms; /* apparaît légèrement après le shadow */
+  transform: none;
 }

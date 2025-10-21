@@ -1,5 +1,29 @@
+/*Scroll Down button - hero section*/
+/* Mini anim: scroll down indicator */
+#scroll-down-svg {
+  animation: scroll-down-bob 1.6s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes scroll-down-bob {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #scroll-down-svg {
+    animation: none;
+  }
+}
+
 @media screen and (min-width: 992px) {
-  /* Ne montrer que pour la première ligne large, marquée par JS */
   .watches_gallery_item-wrap.is-feature-line > .watches_gallery_txt-wrap.is-title {
     display: flex !important;
   }
