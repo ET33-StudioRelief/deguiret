@@ -42,6 +42,8 @@ export function sliderCustomCursor(
     if (wrapper.dataset.cursorInited === 'true') return;
     wrapper.dataset.cursorInited = 'true';
 
+    const mqlDesktop = window.matchMedia('(min-width: 992px)');
+
     // Create arrows inside the wrapper (no global ids, per-wrapper only)
     const create = (rotateDeg: number): HTMLElement => {
       const el = document.createElement('div');
@@ -100,12 +102,20 @@ export function sliderCustomCursor(
       return null;
     };
 
+    const hideArrows = () => {
+      wrapper.style.cursor = '';
+      left.style.visibility = 'hidden';
+      right.style.visibility = 'hidden';
+    };
+
     wrapper.addEventListener('mousemove', (ev) => {
+      if (!mqlDesktop.matches) {
+        hideArrows();
+        return;
+      }
       // Désactiver le curseur custom si on survole un élément exclu
       if (excludeSelector && (ev.target as HTMLElement)?.closest(excludeSelector)) {
-        wrapper.style.cursor = '';
-        left.style.visibility = 'hidden';
-        right.style.visibility = 'hidden';
+        hideArrows();
         return;
       }
       const rect = wrapper.getBoundingClientRect();
@@ -120,13 +130,10 @@ export function sliderCustomCursor(
       active.style.top = `${y}px`;
     });
 
-    wrapper.addEventListener('mouseleave', () => {
-      wrapper.style.cursor = '';
-      left.style.visibility = 'hidden';
-      right.style.visibility = 'hidden';
-    });
+    wrapper.addEventListener('mouseleave', hideArrows);
 
     wrapper.addEventListener('click', (ev) => {
+      if (!mqlDesktop.matches) return;
       if (excludeSelector && (ev.target as HTMLElement)?.closest(excludeSelector)) {
         return; // ne pas déclencher la nav du slider si exclu
       }
@@ -139,6 +146,10 @@ export function sliderCustomCursor(
       } else {
         swiper.slideNext();
       }
+    });
+
+    mqlDesktop.addEventListener?.('change', () => {
+      if (!mqlDesktop.matches) hideArrows();
     });
   });
 }

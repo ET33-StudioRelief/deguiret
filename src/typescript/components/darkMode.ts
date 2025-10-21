@@ -4,7 +4,7 @@ const THEME_COOKIE_NAME = 'theme';
 const COOKIE_MAX_AGE = 31536000; // 1 an en secondes
 
 /**
- * Lit le thème depuis le cookie, sinon préférence système.
+ * Lit le thème depuis le cookie, sinon "light" par défaut (on ignore la préférence système).
  */
 function getStoredTheme(): 'dark' | 'light' {
   const cookieValue = document.cookie
@@ -15,9 +15,8 @@ function getStoredTheme(): 'dark' | 'light' {
   if (cookieValue === 'dark' || cookieValue === 'light') {
     return cookieValue;
   }
-
-  // Fallback: préférence système
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  // Fallback: toujours light (pas de préférence système)
+  return 'light';
 }
 
 /**

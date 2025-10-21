@@ -22,10 +22,12 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
     );
   };
 
-  const openItem = (item: HTMLElement) => {
+  const openItem = (item: HTMLElement, shouldScroll = true) => {
     item.classList.add('is-open');
-    // Centrer immédiatement avec compensation de navbar, puis affiner après un court délai
-    centerAccurate(item, 'smooth');
+    // Centrer uniquement si demandé (pas lors de l'ouverture initiale)
+    if (shouldScroll) {
+      centerAccurate(item, 'smooth');
+    }
     const contents = getContentElements(item);
     contents.forEach((el) => {
       // Mesure la hauteur naturelle
@@ -43,8 +45,10 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
       };
       el.addEventListener('transitionend', onEnd);
     });
-    // Affinage: re-centre brièvement pendant l'animation pour compenser la variation de hauteur
-    setTimeout(() => centerAccurate(item, 'auto'), 160);
+    // Affinage si on a scrollé: re-centre brièvement pendant l'animation
+    if (shouldScroll) {
+      setTimeout(() => centerAccurate(item, 'auto'), 160);
+    }
   };
 
   const closeItem = (item: HTMLElement) => {
@@ -82,12 +86,12 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
       } else {
         // Sinon, fermer les autres et ouvrir celui-ci
         closeAll(item);
-        openItem(item);
+        openItem(item, true);
       }
     });
   });
 
   if (options?.openFirst && teamItems[0]) {
-    openItem(teamItems[0]);
+    openItem(teamItems[0], false);
   }
 }

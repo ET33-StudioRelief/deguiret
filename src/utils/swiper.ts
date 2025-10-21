@@ -18,7 +18,7 @@ export function swiperStep() {
         : null;
     const paginationEl = inner || sibling;
 
-    new Swiper(el, {
+    const instance = new Swiper(el, {
       modules: [Pagination, Autoplay],
       direction: 'horizontal',
       slidesPerView: 1,
@@ -41,6 +41,24 @@ export function swiperStep() {
           }
         : false,
     });
+
+    // Navigation sous 992px si des boutons existent
+    const mql = window.matchMedia('(max-width: 991px)');
+    const navigationWrap = el.parentElement?.querySelector(
+      '.swiper-navigation.is-mobile.is-step'
+    ) as HTMLElement | null;
+    const prevBtn = navigationWrap?.querySelector('.swiper-button-prev') as HTMLElement | null;
+    const nextBtn = navigationWrap?.querySelector('.swiper-button-next') as HTMLElement | null;
+    const updateNav = () => {
+      if (!navigationWrap) return;
+      navigationWrap.style.display = mql.matches ? 'flex' : 'none';
+    };
+    if (navigationWrap && prevBtn && nextBtn) {
+      prevBtn.addEventListener('click', () => instance.slidePrev());
+      nextBtn.addEventListener('click', () => instance.slideNext());
+      updateNav();
+      mql.addEventListener('change', updateNav);
+    }
     el.dataset.swiperInitialized = 'true';
   });
 }
@@ -81,6 +99,24 @@ export function swiperCustomPieces(): void {
     frontSwiper.on('slideChange', () => {
       bgSwiper.slideToLoop(frontSwiper.realIndex, 0, false);
     });
+
+    // Navigation sous 992px si des boutons existent (custom pieces)
+    const mql = window.matchMedia('(max-width: 991px)');
+    const navigationWrap = wrapper.querySelector(
+      '.swiper-navigation.is-mobile.is-hero-custom-pieces'
+    ) as HTMLElement | null;
+    const prevBtn = navigationWrap?.querySelector('.swiper-button-prev') as HTMLElement | null;
+    const nextBtn = navigationWrap?.querySelector('.swiper-button-next') as HTMLElement | null;
+    const updateNav = () => {
+      if (!navigationWrap) return;
+      navigationWrap.style.display = mql.matches ? 'flex' : 'none';
+    };
+    if (navigationWrap && prevBtn && nextBtn) {
+      prevBtn.addEventListener('click', () => bgSwiper.slidePrev());
+      nextBtn.addEventListener('click', () => bgSwiper.slideNext());
+      updateNav();
+      mql.addEventListener('change', updateNav);
+    }
   });
 }
 
@@ -143,7 +179,7 @@ export function swiperProduct(): void {
     });
 
     // Init main slider with thumbs module
-    new Swiper(main, {
+    const mainInstance = new Swiper(main, {
       modules: [Thumbs],
       direction: 'horizontal',
       slidesPerView: 1,
@@ -157,6 +193,24 @@ export function swiperProduct(): void {
     });
 
     main.dataset.swiperInitialized = 'true';
+
+    // Navigation sous 992px si des boutons existent (product)
+    const mql = window.matchMedia('(max-width: 991px)');
+    const navigationWrap = container.querySelector(
+      '.swiper-navigation.is-mobile.is-product'
+    ) as HTMLElement | null;
+    const prevBtn = navigationWrap?.querySelector('.swiper-button-prev') as HTMLElement | null;
+    const nextBtn = navigationWrap?.querySelector('.swiper-button-next') as HTMLElement | null;
+    const updateNav = () => {
+      if (!navigationWrap) return;
+      navigationWrap.style.display = mql.matches ? 'flex' : 'none';
+    };
+    if (navigationWrap && prevBtn && nextBtn) {
+      prevBtn.addEventListener('click', () => mainInstance.slidePrev());
+      nextBtn.addEventListener('click', () => mainInstance.slideNext());
+      updateNav();
+      mql.addEventListener('change', updateNav);
+    }
   });
 }
 
