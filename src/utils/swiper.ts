@@ -2,23 +2,19 @@ import Swiper from 'swiper';
 import { Autoplay, Controller, Pagination, Thumbs } from 'swiper/modules';
 
 export function swiperStep() {
-  // Guard: init only when the target slider exists on the page
-  const elements = Array.from(document.querySelectorAll<HTMLElement>('.swiper.is-step'));
-  if (elements.length === 0) {
-    return;
-  }
-  // Create one Swiper instance per matching element, avoid double init
-  elements.forEach((el) => {
-    if (el.dataset.swiperInitialized === 'true') return;
-    // Find pagination inside, otherwise as sibling under same parent
-    const inner = el.querySelector('.swiper-pagination.is-step') as HTMLElement | null;
-    const sibling =
-      !inner && el.parentElement
-        ? (el.parentElement.querySelector('.swiper-pagination.is-step') as HTMLElement | null)
-        : null;
-    const paginationEl = inner || sibling;
+  // Guard: init seulement s'il existe au moins un wrapper de slider step
+  const wrappers = Array.from(document.querySelectorAll<HTMLElement>('.step_slider-wrapper'));
+  if (wrappers.length === 0) return;
 
-    const instance = new Swiper(el, {
+  wrappers.forEach((wrapper) => {
+    const swiperEl = wrapper.querySelector<HTMLElement>('.swiper.is-step');
+    if (!swiperEl) return;
+    if (swiperEl.dataset.swiperInitialized === 'true') return;
+
+    // Pagination et navigation strictement dans le wrapper courant
+    const paginationEl = wrapper.querySelector<HTMLElement>('.swiper-pagination.is-step');
+
+    const instance = new Swiper(swiperEl, {
       modules: [Pagination, Autoplay],
       direction: 'horizontal',
       slidesPerView: 1,
@@ -42,24 +38,25 @@ export function swiperStep() {
         : false,
     });
 
-    // Navigation sous 992px si des boutons existent
+    // Navigation sous 992px, propre à ce wrapper
     const mql = window.matchMedia('(max-width: 991px)');
-    const navigationWrap = el.parentElement?.querySelector(
-      '.swiper-navigation.is-mobile.is-step'
-    ) as HTMLElement | null;
+    const navigationWrap = wrapper.querySelector<HTMLElement>('.swiper-navigation.is-mobile');
     const prevBtn = navigationWrap?.querySelector('.swiper-button-prev') as HTMLElement | null;
     const nextBtn = navigationWrap?.querySelector('.swiper-button-next') as HTMLElement | null;
+
     const updateNav = () => {
       if (!navigationWrap) return;
       navigationWrap.style.display = mql.matches ? 'flex' : 'none';
     };
+
     if (navigationWrap && prevBtn && nextBtn) {
       prevBtn.addEventListener('click', () => instance.slidePrev());
       nextBtn.addEventListener('click', () => instance.slideNext());
       updateNav();
       mql.addEventListener('change', updateNav);
     }
-    el.dataset.swiperInitialized = 'true';
+
+    swiperEl.dataset.swiperInitialized = 'true';
   });
 }
 
