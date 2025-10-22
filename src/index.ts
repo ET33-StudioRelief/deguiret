@@ -1,6 +1,6 @@
 import './index.css';
 
-import { applyStoredThemeEarly, setupDarkMode } from './typescript/components/darkMode';
+import { setupDarkMode } from './typescript/components/darkMode';
 import {
   faqDropdown,
   setupButtonHoverCursor,
@@ -39,9 +39,6 @@ import {
   swiperStep,
   swiperTestimonial,
 } from './utils/swiper';
-
-// Appliquer le thème stocké AVANT Webflow pour éviter le flash
-applyStoredThemeEarly();
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
