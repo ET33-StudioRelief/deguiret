@@ -24,14 +24,15 @@ import {
   setupWatchesSortToggle,
   setupWatchesViewToggle,
 } from './typescript/homepage';
-import {
-  setupProductAccordion,
-  setupProductFeaturesTable,
-  setupProductPrevNext,
-} from './typescript/product';
 import { setupStoryTestNav } from './typescript/story';
 import { setupTeamInteractions } from './typescript/team';
 import { setupTimeline } from './typescript/timeline';
+import {
+  setupProductAccordion,
+  setupProductFeaturesTable,
+  setupProductFeaturesTableMobile,
+  setupProductPrevNext,
+} from './typescript/watches';
 import {
   swiperCollection,
   swiperCustomPieces,
@@ -94,11 +95,12 @@ window.Webflow.push(() => {
     sliderCustomCursor(
       '.collection-slider_content',
       '.swiper.is-collection',
-      '.collection-slider_card'
+      '.swiper.is-collection .swiper-slide.is-center .collection-slider_card'
     );
     swiperCollection();
     setupProductAccordion();
     setupProductFeaturesTable();
+    setupProductFeaturesTableMobile();
     setupProductPrevNext('#show-prev-product', '#show-next-product', '.w-dyn-items .w-dyn-item a');
   }
 });

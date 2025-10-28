@@ -218,7 +218,7 @@ export function swiperCollection(): void {
 
   elements.forEach((el) => {
     if (el.dataset.swiperInitialized === 'true') return;
-    new Swiper(el, {
+    const instance = new Swiper(el, {
       slidesPerView: 5,
       spaceBetween: 80,
       loop: true,
@@ -228,8 +228,8 @@ export function swiperCollection(): void {
       watchSlidesProgress: true,
       // Responsive defaults (optional)
       breakpoints: {
-        0: { slidesPerView: 1.2, spaceBetween: 16 },
-        480: { slidesPerView: 2, spaceBetween: 24 },
+        0: { slidesPerView: 1, spaceBetween: 16 },
+        480: { slidesPerView: 1, spaceBetween: 24 },
         768: { spaceBetween: 40 },
         992: { slidesPerView: 3, spaceBetween: 60 },
         1200: { slidesPerView: 5, spaceBetween: 80 },
@@ -251,6 +251,28 @@ export function swiperCollection(): void {
       },
     });
     el.dataset.swiperInitialized = 'true';
+
+    // Navigation sous 992px si des boutons existent (collection)
+    const mql = window.matchMedia('(max-width: 991px)');
+    const container =
+      (el.closest('.collection-slider_content') as HTMLElement | null) || el.parentElement;
+    const navigationWrap = container
+      ? (container.querySelector(
+          '.swiper-navigation.is-mobile.is-collection'
+        ) as HTMLElement | null)
+      : null;
+    const prevBtn = navigationWrap?.querySelector('.swiper-button-prev') as HTMLElement | null;
+    const nextBtn = navigationWrap?.querySelector('.swiper-button-next') as HTMLElement | null;
+    const updateNav = () => {
+      if (!navigationWrap) return;
+      navigationWrap.style.display = mql.matches ? 'flex' : 'none';
+    };
+    if (navigationWrap && prevBtn && nextBtn) {
+      prevBtn.addEventListener('click', () => instance.slidePrev());
+      nextBtn.addEventListener('click', () => instance.slideNext());
+      updateNav();
+      mql.addEventListener('change', updateNav);
+    }
   });
 }
 
@@ -259,7 +281,24 @@ function updateCollectionScale(root: HTMLElement): void {
   if (slides.length === 0) return;
   const isWide = typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches;
 
-  // En-dessous de 768px: on neutralise totalement les styles inline + classes
+  // Helper: active uniquement le lien de la slide centrée
+  const updateAnchorClickability = () => {
+    slides.forEach((slide) => {
+      const link = slide.querySelector<HTMLAnchorElement>('.collection-slider_card a');
+      if (!link) return;
+      if (slide.classList.contains('is-center')) {
+        link.style.pointerEvents = '';
+        link.removeAttribute('aria-disabled');
+        link.removeAttribute('tabindex');
+      } else {
+        link.style.pointerEvents = 'none';
+        link.setAttribute('aria-disabled', 'true');
+        link.setAttribute('tabindex', '-1');
+      }
+    });
+  };
+
+  // En-dessous de 768px: neutraliser les styles, mais conserver la notion de slide centrale pour la cliquabilité
   if (!isWide) {
     slides.forEach((slide) => {
       slide.classList.remove('is-center');
@@ -267,6 +306,10 @@ function updateCollectionScale(root: HTMLElement): void {
       card.style.transform = '';
       card.style.transformOrigin = '';
     });
+    const centerSmall =
+      (root.querySelector('.swiper-slide-active') as HTMLElement | null) || slides[0];
+    if (centerSmall) centerSmall.classList.add('is-center');
+    updateAnchorClickability();
     return;
   }
   // Centre d'ancrage = centre du slide visible du milieu (plus robuste que le centre du conteneur)
@@ -293,4 +336,7 @@ function updateCollectionScale(root: HTMLElement): void {
     card.style.transformOrigin = 'center center';
     card.style.transform = `scale(${scale})`;
   });
+
+  // Appliquer la cliquabilité uniquement sur la slide centrale (>=768px)
+  updateAnchorClickability();
 }

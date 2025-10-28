@@ -89,3 +89,11 @@
     opacity: 1;
   }
 }
+
+/* Collection slider - cliquable seulement au centre (toutes largeurs) */
+.swiper.is-collection .collection-slider_card a {
+  pointer-events: none;
+}
+.swiper.is-collection .swiper-slide.is-center .collection-slider_card a {
+  pointer-events: auto;
+}

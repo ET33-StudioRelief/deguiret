@@ -1,3 +1,18 @@
+/*HERO SECTION*/
+/* Add pseudo-élément for background image */
+.hp-hero_video-wrap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw; /* Largeur de la fenêtre, pas 1000% */
+  height: 100%;
+  background-image: url('https://cdn.prod.website-files.com/68d15c3cc19b305efc7db1cc/6900a7998937384b23cb2bd9_poster-video.avif');
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+}
+
 /*Scroll Down button - hero section*/
 /* Mini anim: scroll down indicator */
 #scroll-down-svg {

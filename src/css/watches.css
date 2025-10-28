@@ -73,4 +73,7 @@
   .product-hero_img-wrap {
     order: -1 !important; /* passe avant .product-hero_left */
   }
+  .table_info-rich-text-wrapper.is-mobile .w-richtext ul > li:last-child {
+    border-bottom: 0;
+  }
 }
