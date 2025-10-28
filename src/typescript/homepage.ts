@@ -18,7 +18,7 @@ export function galleryTextBlock(
 // Toggle between Gallery and Grid views, update label and heights
 export function setupWatchesViewToggle(
   galleryBtn = '#show-gallery-watches',
-  gridBtn = '#hide-grid-watches',
+  gridBtn = '#show-grid-watches',
   labelSelector = '#view-type-data-text',
   galleryWrapper = '.watches_gallery_wrapper',
   gridWrapper = '.watches_grid_wrapper'
@@ -102,6 +102,27 @@ export function setupWatchesViewToggle(
     // Retire sur le bouton cliqué, ajoute sur l'autre
     gridEl.classList.remove('is-border-tertiary');
     galleryEl.classList.add('is-border-tertiary');
+  });
+
+  // Toggle en cliquant sur le label: bascule vers l'autre vue que celle actuellement affichée
+  label.addEventListener('click', (e) => {
+    e.preventDefault();
+    // Détermine la vue active via les classes des boutons:
+    // le bouton actif est celui qui n'a PAS la classe 'is-border-tertiary'
+    const isGalleryActive = !galleryEl.classList.contains('is-border-tertiary');
+    if (isGalleryActive) {
+      // Aller vers Grid
+      applyLabel(gridEl);
+      setHeights(false);
+      gridEl.classList.remove('is-border-tertiary');
+      galleryEl.classList.add('is-border-tertiary');
+    } else {
+      // Aller vers Gallery
+      applyLabel(galleryEl);
+      setHeights(true);
+      galleryEl.classList.remove('is-border-tertiary');
+      gridEl.classList.add('is-border-tertiary');
+    }
   });
 }
 
@@ -189,6 +210,14 @@ export function setupWatchesSortToggle(
     reversed.forEach((item) => container.appendChild(item));
   };
 
+  // Helper: reset des transforms appliqués par setupWatchesFloat pour éviter les décalages au tri
+  const resetGalleryFloatTransforms = () => {
+    const floats = Array.from(document.querySelectorAll<HTMLElement>('.watches_gallery_item-wrap'));
+    floats.forEach((el) => {
+      el.style.transform = '';
+    });
+  };
+
   // Helper: update label if present
   const updateLabel = (fromEl: HTMLElement) => {
     if (!label) return;
@@ -205,6 +234,8 @@ export function setupWatchesSortToggle(
     // Toggle border classes (inverse)
     oldestEl.classList.remove('is-border-tertiary');
     newestEl.classList.add('is-border-tertiary');
+    // Évite les décalages liés au flottement après réordonnancement
+    resetGalleryFloatTransforms();
     // Re-mark feature line after reorder
     galleryTextBlock();
     // Trigger view-changed to re-observe items for animation
@@ -220,11 +251,42 @@ export function setupWatchesSortToggle(
     // Toggle border classes (inverse)
     newestEl.classList.remove('is-border-tertiary');
     oldestEl.classList.add('is-border-tertiary');
+    // Évite les décalages liés au flottement après réordonnancement
+    resetGalleryFloatTransforms();
     // Re-mark feature line after reorder
     galleryTextBlock();
     // Trigger view-changed to re-observe items for animation
     window.dispatchEvent(new CustomEvent('watches:view-changed'));
   });
+
+  // Toggle en cliquant sur le label d'ordre: bascule vers l'autre tri actif
+  if (label) {
+    label.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Le bouton actif est celui qui n'a PAS la classe 'is-border-tertiary'
+      const isOldestActive = !oldestEl.classList.contains('is-border-tertiary');
+      if (isOldestActive) {
+        // Passer à NEWEST (Z-A)
+        reverseOrder(gallery, galleryInitialOrder);
+        reverseOrder(grid, gridInitialOrder);
+        updateLabel(newestEl);
+        newestEl.classList.remove('is-border-tertiary');
+        oldestEl.classList.add('is-border-tertiary');
+      } else {
+        // Revenir à OLDEST (A-Z)
+        restoreInitialOrder(gallery, galleryInitialOrder);
+        restoreInitialOrder(grid, gridInitialOrder);
+        updateLabel(oldestEl);
+        oldestEl.classList.remove('is-border-tertiary');
+        newestEl.classList.add('is-border-tertiary');
+      }
+      // Évite les décalages liés au flottement après réordonnancement
+      resetGalleryFloatTransforms();
+      // Met à jour la ligne "feature" et relance les animations d'entrée
+      galleryTextBlock();
+      window.dispatchEvent(new CustomEvent('watches:view-changed'));
+    });
+  }
 }
 
 // Mobile behaviour for grid cards: first tap opens text, second tap follows link

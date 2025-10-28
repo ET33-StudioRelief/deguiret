@@ -86,44 +86,53 @@ export function setupProductAccordion(options: AccordionOptions = {}): void {
 // - prevAnchorId: '#show-prev-product'
 // - nextAnchorId: '#show-next-product'
 // - itemLinkSelector: anchors inside CMS items (default: '.w-dyn-items .w-dyn-item a')
+// Navigation prev/next basée sur l'ordre alphabétique des modèles
 export function setupProductPrevNext(
   prevElSelector = '#show-prev-product',
   nextElSelector = '#show-next-product',
   itemLinkSelector = '.w-dyn-items .w-dyn-item a',
   sourceContainerSelector = '[data-prevnext-source]'
 ): void {
+  // Trouver les boutons de navigation
   const prevEl = document.querySelector<HTMLElement>(prevElSelector);
   const nextEl = document.querySelector<HTMLElement>(nextElSelector);
   if (!prevEl || !nextEl) return;
 
-  // Get current product slug from URL (last non-empty segment)
+  // Extraire le slug du produit courant depuis l'URL
   const pathParts = window.location.pathname.split('/').filter(Boolean);
   const currentSlug = pathParts[pathParts.length - 1];
   if (!currentSlug) return;
 
-  // Determine collection base path to constrain links (first segment)
+  // Déterminer le segment de base de la collection (ex: /watches/)
   const baseSegment = '/' + (pathParts[0] || '').toLowerCase() + '/';
 
-  // Pick source container if provided (hidden collection recommended)
+  // Priorité: liste cachée triée par modèle (#list-model), sinon fallback
+  const listModel = document.getElementById('list-model') as HTMLElement | null;
   const sourceRoot =
-    document.querySelector<HTMLElement>(sourceContainerSelector) || document.documentElement;
+    listModel ||
+    (document.querySelector<HTMLElement>(sourceContainerSelector) as HTMLElement | null) ||
+    document.documentElement;
 
-  // Collect links in DOM order, restricted to the same collection base
-  const links = Array.from(sourceRoot.querySelectorAll<HTMLAnchorElement>(itemLinkSelector)).filter(
-    (a) => {
-      const raw = a.getAttribute('href') || '';
-      if (!raw || raw === '#') return false;
-      try {
-        const url = new URL(raw, window.location.origin);
-        return url.pathname.toLowerCase().startsWith(baseSegment);
-      } catch {
-        return false;
-      }
+  // Collecter les liens dans l'ordre DOM (trié alphabétiquement par modèle)
+  const nodeList = listModel
+    ? sourceRoot.querySelectorAll<HTMLAnchorElement>('a[href]')
+    : sourceRoot.querySelectorAll<HTMLAnchorElement>(itemLinkSelector);
+
+  // Filtrer: même collection, liens valides uniquement
+  const links = Array.from(nodeList).filter((a) => {
+    const raw = a.getAttribute('href') || '';
+    if (!raw || raw === '#') return false;
+    try {
+      const url = new URL(raw, window.location.origin);
+      return url.pathname.toLowerCase().startsWith(baseSegment);
+    } catch {
+      return false;
     }
-  );
+  });
+
   if (links.length === 0) return;
 
-  // Normalize to slug (last non-empty path segment)
+  // Extraire les slugs des liens
   const linkToSlug = (href: string): string | null => {
     try {
       const url = new URL(href, window.location.origin);
@@ -140,22 +149,21 @@ export function setupProductPrevNext(
   }[];
   if (slugs.length === 0) return;
 
-  // Find current index in that ordered list
+  // Trouver l'index du produit courant dans la liste triée
   const idx = slugs.findIndex((x) => x.slug === currentSlug);
   if (idx === -1) return;
 
-  // Compute prev/next with wrap-around
+  // Calculer prev/next avec boucle (wrap-around)
   const prevIdx = (idx - 1 + slugs.length) % slugs.length;
   const nextIdx = (idx + 1) % slugs.length;
 
+  // Nettoyer les URLs (supprimer hash Webflow)
   const stripTrailingHash = (href: string | undefined): string | null => {
     if (!href) return null;
     try {
       const url = new URL(href, window.location.origin);
-      // Supprime le hash éventuel ajouté par Webflow (# en fin d'URL)
-      return url.origin + url.pathname + url.search; // sans url.hash
+      return url.origin + url.pathname + url.search;
     } catch {
-      // Fallback: simple regex
       return href.replace(/#$/, '') || null;
     }
   };
@@ -167,6 +175,7 @@ export function setupProductPrevNext(
     slugs[nextIdx]?.a?.getAttribute('href') || slugs[nextIdx]?.a?.href
   );
 
+  // Configurer le bouton précédent
   if (prevHref) {
     prevEl.setAttribute('data-href', prevHref);
     prevEl.removeAttribute('aria-disabled');
@@ -179,6 +188,7 @@ export function setupProductPrevNext(
     prevEl.style.opacity = '0.5';
   }
 
+  // Configurer le bouton suivant
   if (nextHref) {
     nextEl.setAttribute('data-href', nextHref);
     nextEl.removeAttribute('aria-disabled');
@@ -191,7 +201,7 @@ export function setupProductPrevNext(
     nextEl.style.opacity = '0.5';
   }
 
-  // Click navigation for div buttons
+  // Gestionnaire de clic pour la navigation
   const handleClick = (ev: Event) => {
     const el = ev.currentTarget as HTMLElement | null;
     const href = el?.getAttribute('data-href') || '';
