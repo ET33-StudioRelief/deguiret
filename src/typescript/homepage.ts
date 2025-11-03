@@ -343,6 +343,13 @@ export function setupWatchesGridMobile(
     card.addEventListener('click', (ev) => {
       if (!opened) {
         ev.preventDefault();
+        // Ferme les autres cartes déjà ouvertes
+        cards.forEach((other) => {
+          if (other === card) return;
+          other.classList.remove('is-open');
+          const otherTxt = other.querySelector<HTMLElement>(textSelector);
+          if (otherTxt) otherTxt.style.display = 'none';
+        });
         card.classList.add('is-open');
         const txt = card.querySelector<HTMLElement>(textSelector);
         if (txt) txt.style.display = '';
