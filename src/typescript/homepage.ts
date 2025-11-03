@@ -163,18 +163,55 @@ export function setupWatchesRowsInView(
 
 export function setupWatchesFloat(selector = '.watches_gallery_item-wrap', amp = -50): void {
   const els = Array.from(document.querySelectorAll<HTMLElement>(selector));
-  const upd = () => {
-    const vh = innerHeight,
-      vc = vh / 2;
+  if (els.length === 0) return;
+
+  // Calcul flottant en fonction de la position dans la fenêtre
+  const updateAll = () => {
+    const viewportHeight = window.innerHeight;
+    const viewportCenter = viewportHeight / 2;
     els.forEach((el) => {
-      const r = el.getBoundingClientRect(),
-        c = r.top + r.height / 2;
-      el.style.transform = `translateY(${((vc - c) / vh) * amp}px)`;
+      // Réinitialise quand l'élément est caché par Finsweet ([hidden])
+      if (el.hasAttribute('hidden') || el.offsetParent === null) {
+        el.style.transform = '';
+        return;
+      }
+      const rect = el.getBoundingClientRect();
+      const center = rect.top + rect.height / 2;
+      const translate = ((viewportCenter - center) / viewportHeight) * amp;
+      el.style.transform = `translateY(${translate}px)`;
     });
   };
-  addEventListener('scroll', () => requestAnimationFrame(upd), { passive: true });
-  addEventListener('resize', () => requestAnimationFrame(upd));
-  upd();
+
+  const scheduleUpdate = () => requestAnimationFrame(updateAll);
+
+  // Scroll/resize → recalcul
+  window.addEventListener('scroll', scheduleUpdate, { passive: true });
+  window.addEventListener('resize', scheduleUpdate);
+
+  // MutationObserver: surveille les changements d'attributs (hidden/style) et la structure
+  const observer = new MutationObserver(() => scheduleUpdate());
+  els.forEach((el) => {
+    observer.observe(el, { attributes: true, attributeFilter: ['hidden', 'style'] });
+  });
+
+  // Surveille aussi le conteneur parent pour les ajouts/suppressions/réordonnancements
+  const parent = els[0].parentElement;
+  if (parent) {
+    const treeObserver = new MutationObserver(() => scheduleUpdate());
+    treeObserver.observe(parent, { childList: true, subtree: false });
+  }
+
+  // Recalcul lors des événements internes de la page
+  window.addEventListener('watches:view-changed', scheduleUpdate);
+
+  // Hook Finsweet (si présent): recalcul après application/maj des filtres
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).fsAttributes = (window as any).fsAttributes || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).fsAttributes.push(['cmsfilter', () => scheduleUpdate()]);
+
+  // Initial
+  updateAll();
 }
 
 // Sort order toggle for watches collection (oldest/newest)

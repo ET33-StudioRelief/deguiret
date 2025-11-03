@@ -30,7 +30,6 @@ import { setupTimeline } from './typescript/timeline';
 import {
   setupProductAccordion,
   setupProductFeaturesTable,
-  setupProductFeaturesTableMobile,
   setupProductPrevNext,
 } from './typescript/watches';
 import {
@@ -100,7 +99,6 @@ window.Webflow.push(() => {
     swiperCollection();
     setupProductAccordion();
     setupProductFeaturesTable();
-    setupProductFeaturesTableMobile();
     setupProductPrevNext('#show-prev-product', '#show-next-product', '.w-dyn-items .w-dyn-item a');
   }
 });
