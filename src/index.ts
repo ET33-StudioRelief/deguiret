@@ -18,6 +18,7 @@ import { ctaParallax, setupLayout2ColMoveUp } from './typescript/components/sect
 import { setupCustomPiecesProgress } from './typescript/customPieces';
 import {
   galleryTextBlock,
+  setupCollectionSelectionClass,
   setupWatchesFloat,
   setupWatchesGridMobile,
   setupWatchesRowsInView,
@@ -60,6 +61,7 @@ window.Webflow.push(() => {
     setupWatchesRowsInView();
     setupWatchesFloat('.watches_gallery_item-wrap');
     setupWatchesGridMobile();
+    setupCollectionSelectionClass('.filters-collection', 'Filters-Collection');
     setupNavbarBackgroundNonHero();
   }
   //Who we are

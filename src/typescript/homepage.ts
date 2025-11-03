@@ -354,3 +354,37 @@ export function setupWatchesGridMobile(
     });
   });
 }
+
+// Ajoute/retire une classe sur <html> quand un filtre collection est sélectionné
+export function setupCollectionSelectionClass(
+  filtersWrapperSelector = '.filters-collection',
+  inputName = 'Filters-Collection'
+): void {
+  const wrapper = document.querySelector<HTMLElement>(filtersWrapperSelector);
+  // On ne dépend pas strictement du wrapper, mais il permet d'optimiser la recherche
+  const radios = Array.from(
+    (wrapper || document).querySelectorAll<HTMLInputElement>(`input[name="${inputName}"]`)
+  );
+  if (radios.length === 0) return;
+
+  const update = () => {
+    const hasSelection = radios.some((r) => r.checked);
+    document.documentElement.classList.toggle('has-collection-selected', hasSelection);
+  };
+
+  radios.forEach((r) => r.addEventListener('change', update));
+
+  // Hook Finsweet: si le filtre change sans événement change natif
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).fsAttributes = (window as any).fsAttributes || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).fsAttributes.push([
+    'cmsfilter',
+    () => {
+      // L'état checked des radios reflète la sélection courante → on met à jour
+      requestAnimationFrame(update);
+    },
+  ]);
+
+  update();
+}

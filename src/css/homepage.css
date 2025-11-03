@@ -203,3 +203,12 @@
   opacity: 1;
   transform: translateY(0);
 }
+/* hide by default */
+#collection-descriptions [fs-list-element='item'] {
+  display: none;
+}
+
+/* Show when filter is applied*/
+.has-collection-selected #collection-descriptions [fs-list-element='item']:not([hidden]) {
+  display: block;
+}
