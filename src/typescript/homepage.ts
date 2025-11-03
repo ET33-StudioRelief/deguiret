@@ -339,9 +339,9 @@ export function setupWatchesGridMobile(
   if (cards.length === 0) return;
 
   cards.forEach((card) => {
-    let opened = false;
     card.addEventListener('click', (ev) => {
-      if (!opened) {
+      const isOpen = card.classList.contains('is-open');
+      if (!isOpen) {
         ev.preventDefault();
         // Ferme les autres cartes déjà ouvertes
         cards.forEach((other) => {
@@ -353,11 +353,7 @@ export function setupWatchesGridMobile(
         card.classList.add('is-open');
         const txt = card.querySelector<HTMLElement>(textSelector);
         if (txt) txt.style.display = '';
-        opened = true;
-      } else {
-        // second tap: follow link (let browser navigate)
-        opened = false;
-      }
+      } // sinon: déjà ouverte → laisser le navigateur suivre le lien
     });
   });
 }
