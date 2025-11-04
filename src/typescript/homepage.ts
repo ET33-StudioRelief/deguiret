@@ -358,36 +358,74 @@ export function setupWatchesGridMobile(
   });
 }
 
-// Ajoute/retire une classe sur <html> quand un filtre collection est sélectionné
-export function setupCollectionSelectionClass(
-  filtersWrapperSelector = '.filters-collection',
-  inputName = 'Filters-Collection'
+// Synchronise un paragraphe unique avec la description de la collection sélectionnée
+export function setupCollectionDescriptionSync(
+  outputSelector = '#collection-description',
+  // Liste cachée servant de source (items CMS) – on prend p:first-of-type comme description
+  sourceListSelector = '.watches_paragraph-wrap .w-dyn-list [fs-list-element="list"]',
+  // Radios du filtre collection
+  radiosSelector = 'form[fs-list-element="filters"] input[fs-list-field="collection"]',
+  // Texte affiché si aucune collection (All) est sélectionnée
+  emptyText: string | null = null
 ): void {
-  const wrapper = document.querySelector<HTMLElement>(filtersWrapperSelector);
-  // On ne dépend pas strictement du wrapper, mais il permet d'optimiser la recherche
-  const radios = Array.from(
-    (wrapper || document).querySelectorAll<HTMLInputElement>(`input[name="${inputName}"]`)
-  );
-  if (radios.length === 0) return;
+  const output = document.querySelector<HTMLElement>(outputSelector);
+  if (!output) return;
 
-  const update = () => {
-    const hasSelection = radios.some((r) => r.checked);
-    document.documentElement.classList.toggle('has-collection-selected', hasSelection);
+  const srcList = document.querySelector<HTMLElement>(sourceListSelector);
+  if (!srcList) return;
+
+  const items = Array.from(
+    srcList.querySelectorAll<HTMLElement>('[fs-list-element="item"], .w-dyn-item')
+  );
+  if (items.length === 0) return;
+
+  // Construit la map { collectionValue → descriptionText }
+  const valueToText = new Map<string, string>();
+  items.forEach((it) => {
+    const valueEl = it.querySelector<HTMLElement>('[fs-list-field="collection"]');
+    if (!valueEl) return;
+    const key = (valueEl.textContent || '').trim();
+    if (!key) return;
+    const p = it.querySelector<HTMLParagraphElement>('p');
+    const desc = (p?.textContent || '').trim();
+    if (desc) valueToText.set(key, desc);
+  });
+
+  const readSelectedValue = (): string | null => {
+    const radios = Array.from(document.querySelectorAll<HTMLInputElement>(radiosSelector));
+    const checked = radios.find((r) => r.checked);
+    if (!checked) return null;
+    const v = (checked.getAttribute('fs-list-value') || checked.value || '').trim();
+    return v || null; // null si All (valeur vide)
   };
 
-  radios.forEach((r) => r.addEventListener('change', update));
+  const applyOutput = () => {
+    const selected = readSelectedValue();
+    if (!selected) {
+      if (emptyText === null) {
+        // Par défaut: vide
+        output.textContent = '';
+      } else {
+        output.textContent = emptyText;
+      }
+      return;
+    }
+    const txt = valueToText.get(selected) || '';
+    output.textContent = txt;
+  };
 
-  // Hook Finsweet: si le filtre change sans événement change natif
+  // Écoute changements utilisateur
+  document.addEventListener('change', (e) => {
+    const t = e.target as HTMLElement | null;
+    if (t && t.matches && t.matches('input[fs-list-field="collection"]')) applyOutput();
+  });
+
+  // Après application des filtres Finsweet (sécurité)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).fsAttributes = (window as any).fsAttributes || [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (window as any).fsAttributes.push([
-    'cmsfilter',
-    () => {
-      // L'état checked des radios reflète la sélection courante → on met à jour
-      requestAnimationFrame(update);
-    },
-  ]);
+  (window as any).fsAttributes.push(['cmsfilter', () => requestAnimationFrame(applyOutput)]);
 
-  update();
+  // Initial
+  applyOutput();
 }

@@ -18,7 +18,7 @@ import { ctaParallax, setupLayout2ColMoveUp } from './typescript/components/sect
 import { setupCustomPiecesProgress } from './typescript/customPieces';
 import {
   galleryTextBlock,
-  setupCollectionSelectionClass,
+  setupCollectionDescriptionSync,
   setupWatchesFloat,
   setupWatchesGridMobile,
   setupWatchesRowsInView,
@@ -61,7 +61,13 @@ window.Webflow.push(() => {
     setupWatchesRowsInView();
     setupWatchesFloat('.watches_gallery_item-wrap');
     setupWatchesGridMobile();
-    setupCollectionSelectionClass('.filters-collection', 'Filters-Collection');
+    // Desktop uniquement: écrit dans #collection-description depuis la liste source
+    setupCollectionDescriptionSync(
+      '#collection-description',
+      '.watches_paragraph-wrap.is-desktop .w-dyn-list [fs-list-element="list"]',
+      'form[fs-list-element="filters"] input[fs-list-field="collection"]',
+      ''
+    );
     setupNavbarBackgroundNonHero();
   }
   //Who we are
