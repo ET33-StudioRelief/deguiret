@@ -19,6 +19,7 @@ import { setupCustomPiecesProgress } from './typescript/customPieces';
 import {
   galleryTextBlock,
   setupCollectionDescriptionSync,
+  setupEmptyBannerByResults,
   setupWatchesFloat,
   setupWatchesGridMobile,
   setupWatchesRowsInView,
@@ -57,11 +58,11 @@ window.Webflow.push(() => {
   if (window.location?.pathname.includes('/')) {
     galleryTextBlock();
     setupWatchesViewToggle();
+    setupEmptyBannerByResults('#watches_sort-empty', '[fs-list-element="list"]');
     setupWatchesSortToggle();
     setupWatchesRowsInView();
     setupWatchesFloat('.watches_gallery_item-wrap');
     setupWatchesGridMobile();
-    // Desktop uniquement: écrit dans #collection-description depuis la liste source
     setupCollectionDescriptionSync(
       '#collection-description',
       '.watches_paragraph-wrap.is-desktop .w-dyn-list [fs-list-element="list"]',

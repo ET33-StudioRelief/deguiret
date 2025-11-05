@@ -358,6 +358,41 @@ export function setupWatchesGridMobile(
   });
 }
 
+// Show empty banner if no results are found (simplified)
+export function setupEmptyBannerByResults(
+  bannerSelector = '#watches_sort-empty',
+  listsRootSelector = '[fs-list-element="list"]'
+): void {
+  const banner = document.querySelector<HTMLElement>(bannerSelector);
+  if (!banner) return;
+
+  const update = () => {
+    const visibleItem = document.querySelector(
+      `${listsRootSelector} .w-dyn-items .w-dyn-item:not([hidden])`
+    );
+    banner.style.opacity = visibleItem ? '0' : '1';
+  };
+
+  // Single global observer to react to DOM/attributes changes
+  const mo = new MutationObserver(() => requestAnimationFrame(update));
+  mo.observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['hidden', 'style', 'class'],
+  });
+
+  // Hooks: Finsweet + view change + resize
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).fsAttributes = (window as any).fsAttributes || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).fsAttributes.push(['cmsfilter', () => requestAnimationFrame(update)]);
+  window.addEventListener('watches:view-changed', () => requestAnimationFrame(update));
+  window.addEventListener('resize', () => requestAnimationFrame(update));
+
+  update();
+}
+
 // Synchronise un paragraphe unique avec la description de la collection sélectionnée
 export function setupCollectionDescriptionSync(
   outputSelector = '#collection-description',
