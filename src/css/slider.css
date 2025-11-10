@@ -71,6 +71,7 @@
   .swiper.is-collection .swiper-slide.is-center {
     transform: scale(1);
     opacity: 1;
+    z-index: 11;
   }
   .swiper.is-collection .swiper-slide.is-near {
     transform: scale(0.7); /* -30% */
@@ -90,10 +91,12 @@
   }
 }
 
-/* Collection slider - cliquable seulement au centre (toutes largeurs) */
-.swiper.is-collection .collection-slider_card a {
-  pointer-events: none;
-}
-.swiper.is-collection .swiper-slide.is-center .collection-slider_card a {
-  pointer-events: auto;
+/* Collection slider - cliquable seulement au centre (>=768px) */
+@media (min-width: 768px) {
+  .swiper.is-collection .collection-slider_card a {
+    pointer-events: none;
+  }
+  .swiper.is-collection .swiper-slide.is-center .collection-slider_card a {
+    pointer-events: auto;
+  }
 }

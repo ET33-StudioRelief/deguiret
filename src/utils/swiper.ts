@@ -230,7 +230,7 @@ export function swiperCollection(): void {
       breakpoints: {
         0: { slidesPerView: 1, spaceBetween: 16 },
         480: { slidesPerView: 1, spaceBetween: 24 },
-        768: { spaceBetween: 40 },
+        768: { slidesPerView: 3, spaceBetween: 40 },
         992: { slidesPerView: 3, spaceBetween: 60 },
         1200: { slidesPerView: 5, spaceBetween: 80 },
       },
@@ -279,14 +279,20 @@ export function swiperCollection(): void {
 function updateCollectionScale(root: HTMLElement): void {
   const slides = Array.from(root.querySelectorAll<HTMLElement>('.swiper-slide'));
   if (slides.length === 0) return;
+  const { swiper } = root as unknown as { swiper?: Swiper };
   const isWide = typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches;
+  const effectiveSlidesPerView =
+    typeof swiper?.params?.slidesPerView === 'number'
+      ? swiper.params.slidesPerView
+      : (swiper?.slidesPerViewDynamic?.() ?? slides.length);
+  const restrictClick = isWide && effectiveSlidesPerView > 1;
 
   // Helper: active uniquement le lien de la slide centrée
   const updateAnchorClickability = () => {
     slides.forEach((slide) => {
       const link = slide.querySelector<HTMLAnchorElement>('.collection-slider_card a');
       if (!link) return;
-      if (slide.classList.contains('is-center')) {
+      if (!restrictClick || slide.classList.contains('is-center')) {
         link.style.pointerEvents = '';
         link.removeAttribute('aria-disabled');
         link.removeAttribute('tabindex');
@@ -298,8 +304,8 @@ function updateCollectionScale(root: HTMLElement): void {
     });
   };
 
-  // En-dessous de 768px: neutraliser les styles, mais conserver la notion de slide centrale pour la cliquabilité
-  if (!isWide) {
+  // Mode mobile ou slider 1 colonne: toutes les slides restent cliquables
+  if (!restrictClick) {
     slides.forEach((slide) => {
       slide.classList.remove('is-center');
       const card = (slide.querySelector('.collection-slider_card') as HTMLElement) || slide;
