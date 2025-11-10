@@ -230,21 +230,54 @@ export function setupWatchesSortToggle(
 
   if (!oldestEl || !newestEl) return;
 
-  // Sauvegarde de l'ordre initial au chargement
-  const galleryInitialOrder = gallery ? Array.from(gallery.children) : [];
-  const gridInitialOrder = grid ? Array.from(grid.children) : [];
-
-  // Helper: restore initial order
-  const restoreInitialOrder = (container: HTMLElement | null, initialOrder: Element[]) => {
-    if (!container || initialOrder.length === 0) return;
-    initialOrder.forEach((item) => container.appendChild(item));
+  const assignOriginalIndex = (container: HTMLElement | null) => {
+    if (!container) return;
+    Array.from(container.children).forEach((child, index) => {
+      const el = child as HTMLElement;
+      if (!el.dataset.originalIndex) {
+        el.dataset.originalIndex = String(index);
+      }
+    });
   };
 
-  // Helper: reverse order (inverse de l'ordre initial)
-  const reverseOrder = (container: HTMLElement | null, initialOrder: Element[]) => {
-    if (!container || initialOrder.length === 0) return;
-    const reversed = [...initialOrder].reverse();
-    reversed.forEach((item) => container.appendChild(item));
+  const isHiddenItem = (el: HTMLElement) => {
+    if (el.hasAttribute('hidden')) return true;
+    const style = el.getAttribute('style') || '';
+    if (style.includes('display:none') || style.includes('display: none')) return true;
+    if (el.getAttribute('aria-hidden') === 'true') return true;
+    return false;
+  };
+
+  const reorderByOriginalIndex = (
+    container: HTMLElement | null,
+    ascending: boolean,
+    forceAssign = false
+  ) => {
+    if (!container) return;
+    if (forceAssign) assignOriginalIndex(container);
+    const children = Array.from(container.children) as HTMLElement[];
+    if (children.length === 0) return;
+    const sortFn = (a: HTMLElement, b: HTMLElement) => {
+      const aIdx = Number(a.dataset.originalIndex || 0);
+      const bIdx = Number(b.dataset.originalIndex || 0);
+      return ascending ? aIdx - bIdx : bIdx - aIdx;
+    };
+    const visible = children.filter((el) => !isHiddenItem(el)).sort(sortFn);
+    const hidden = children.filter((el) => isHiddenItem(el)).sort(sortFn);
+    [...visible, ...hidden].forEach((el) => container.appendChild(el));
+  };
+
+  assignOriginalIndex(gallery);
+  assignOriginalIndex(grid);
+
+  // Helper: restore initial order
+  const restoreInitialOrder = (container: HTMLElement | null) => {
+    reorderByOriginalIndex(container, true);
+  };
+
+  // Helper: reverse order
+  const reverseOrder = (container: HTMLElement | null) => {
+    reorderByOriginalIndex(container, false);
   };
 
   // Helper: reset des transforms appliqués par setupWatchesFloat pour éviter les décalages au tri
@@ -265,8 +298,8 @@ export function setupWatchesSortToggle(
   // Click on "oldest" → restaure l'ordre initial (A-Z)
   oldestEl.addEventListener('click', (e) => {
     e.preventDefault();
-    restoreInitialOrder(gallery, galleryInitialOrder);
-    restoreInitialOrder(grid, gridInitialOrder);
+    restoreInitialOrder(gallery);
+    restoreInitialOrder(grid);
     updateLabel(oldestEl);
     // Toggle border classes (inverse)
     oldestEl.classList.remove('is-border-tertiary');
@@ -282,8 +315,8 @@ export function setupWatchesSortToggle(
   // Click on "newest" → inverse l'ordre initial (Z-A)
   newestEl.addEventListener('click', (e) => {
     e.preventDefault();
-    reverseOrder(gallery, galleryInitialOrder);
-    reverseOrder(grid, gridInitialOrder);
+    reverseOrder(gallery);
+    reverseOrder(grid);
     updateLabel(newestEl);
     // Toggle border classes (inverse)
     newestEl.classList.remove('is-border-tertiary');
@@ -304,15 +337,15 @@ export function setupWatchesSortToggle(
       const isOldestActive = !oldestEl.classList.contains('is-border-tertiary');
       if (isOldestActive) {
         // Passer à NEWEST (Z-A)
-        reverseOrder(gallery, galleryInitialOrder);
-        reverseOrder(grid, gridInitialOrder);
+        reverseOrder(gallery);
+        reverseOrder(grid);
         updateLabel(newestEl);
         newestEl.classList.remove('is-border-tertiary');
         oldestEl.classList.add('is-border-tertiary');
       } else {
         // Revenir à OLDEST (A-Z)
-        restoreInitialOrder(gallery, galleryInitialOrder);
-        restoreInitialOrder(grid, gridInitialOrder);
+        restoreInitialOrder(gallery);
+        restoreInitialOrder(grid);
         updateLabel(oldestEl);
         oldestEl.classList.remove('is-border-tertiary');
         newestEl.classList.add('is-border-tertiary');

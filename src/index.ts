@@ -78,7 +78,7 @@ window.Webflow.push(() => {
     setupNavbarVariantOnMobile('/who-we-are', '.navbar_component');
   }
   //How we make it
-  if (window.location?.pathname.includes('/how-we-make-it')) {
+  if (window.location?.pathname.includes('/the-making')) {
     swiperStep();
     sliderCustomCursor('.step_slider-wrapper', '.swiper.is-step');
     setupTimeline();
