@@ -46,12 +46,16 @@
   .watches_gallery_txt-wrap:not(.is-title) {
     transition: opacity 280ms ease;
   }
-  .watches_gallery_item:hover .watches_gallery_img,
-  .watches_gallery_item:hover .watches_gallery_txt-wrap:not(.is-title) {
+  .watches_gallery_img-wrap:hover .watches_gallery_img,
+  .watches_gallery_img-wrap:hover ~ .watches_gallery_txt-wrap:not(.is-title),
+  .watches_gallery_item:has(.watches_gallery_img-wrap:hover)
+    .watches_gallery_txt-wrap:not(.is-title) {
     opacity: 1;
   }
-  .watches_gallery_item.is-hover .watches_gallery_img,
-  .watches_gallery_item.is-hover .watches_gallery_txt-wrap:not(.is-title) {
+  .watches_gallery_img-wrap.is-hover .watches_gallery_img,
+  .watches_gallery_img-wrap.is-hover ~ .watches_gallery_txt-wrap:not(.is-title),
+  .watches_gallery_item:has(.watches_gallery_img-wrap.is-hover)
+    .watches_gallery_txt-wrap:not(.is-title) {
     opacity: 1;
   }
 

@@ -129,8 +129,12 @@ export function setupWatchesViewToggle(
 // Observe rows (gallery + grid) to fade-in on enter viewport
 export function setupWatchesRowsInView(
   rowsSelector = '.watches_gallery_item-wrap, .watches_grid_card',
-  rootMargin = '0px 0px -10% 0px' // déclenche un peu avant
+  rootMargin = '0px 0px -10% 0px', // déclenche un peu avant
+  minWidthDesktop = 992
 ): void {
+  const mql = window.matchMedia(`(min-width: ${minWidthDesktop}px)`);
+  if (!mql.matches) return; // desktop only
+
   const rows = Array.from(document.querySelectorAll<HTMLElement>(rowsSelector));
   if (rows.length === 0) return;
   const io = new IntersectionObserver(
@@ -387,6 +391,29 @@ export function setupWatchesGridMobile(
         const txt = card.querySelector<HTMLElement>(textSelector);
         if (txt) txt.style.display = '';
       } // sinon: déjà ouverte → laisser le navigateur suivre le lien
+    });
+  });
+}
+
+// Block clicks on text wrap inside gallery item links (desktop only)
+export function setupWatchesGalleryTextClickBlock(
+  itemSelector = '.watches_gallery_item',
+  textSelector = '.watches_gallery_txt-wrap',
+  minWidthDesktop = 992
+): void {
+  const mql = window.matchMedia(`(min-width: ${minWidthDesktop}px)`);
+  if (!mql.matches) return; // mobile: pas de blocage
+
+  const items = Array.from(document.querySelectorAll<HTMLAnchorElement>(itemSelector));
+  if (items.length === 0) return;
+
+  items.forEach((item) => {
+    const textWrap = item.querySelector<HTMLElement>(textSelector);
+    if (!textWrap) return;
+
+    textWrap.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
     });
   });
 }

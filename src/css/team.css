@@ -1,6 +1,9 @@
 .team_item.is-open .team_name {
   color: var(--_brand---text--primary);
 }
+.team_item:not(.is-open) .team_left-col:hover .team_name {
+  color: var(--_brand---text--primary);
+}
 /* Team interactions (accordion-like) */
 .team_item .team_hide-content,
 .team_item .team_right-col {

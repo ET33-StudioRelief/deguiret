@@ -21,6 +21,7 @@ import {
   setupCollectionDescriptionSync,
   setupEmptyBannerByResults,
   setupWatchesFloat,
+  setupWatchesGalleryTextClickBlock,
   setupWatchesGridMobile,
   setupWatchesRowsInView,
   setupWatchesSortToggle,
@@ -63,6 +64,7 @@ window.Webflow.push(() => {
     setupWatchesRowsInView();
     setupWatchesFloat('.watches_gallery_item-wrap');
     setupWatchesGridMobile();
+    setupWatchesGalleryTextClickBlock();
     setupCollectionDescriptionSync(
       '#collection-description',
       '.watches_paragraph-wrap.is-desktop .w-dyn-list [fs-list-element="list"]',
@@ -73,7 +75,7 @@ window.Webflow.push(() => {
   }
   //Who we are
   if (window.location?.pathname.includes('/who-we-are')) {
-    setupTeamInteractions({ openFirst: true });
+    setupTeamInteractions();
     setupNavbarBackgroundNonHero();
     setupNavbarVariantOnMobile('/who-we-are', '.navbar_component');
   }

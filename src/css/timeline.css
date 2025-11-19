@@ -13,6 +13,22 @@
     50% var(--above, 0px);
 }
 
+/* Optimisations pour la fluidité du logo sur mobile */
+.step_timeline-logo-wrapper {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+.step_timeline-logo-wrapper img {
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
 @media screen and (max-width: 1180px) {
   .step_slide,
   .step_slide.is-inverse {
