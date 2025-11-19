@@ -129,12 +129,8 @@ export function setupWatchesViewToggle(
 // Observe rows (gallery + grid) to fade-in on enter viewport
 export function setupWatchesRowsInView(
   rowsSelector = '.watches_gallery_item-wrap, .watches_grid_card',
-  rootMargin = '0px 0px -10% 0px', // déclenche un peu avant
-  minWidthDesktop = 992
+  rootMargin = '0px 0px -10% 0px' // déclenche un peu avant
 ): void {
-  const mql = window.matchMedia(`(min-width: ${minWidthDesktop}px)`);
-  if (!mql.matches) return; // desktop only
-
   const rows = Array.from(document.querySelectorAll<HTMLElement>(rowsSelector));
   if (rows.length === 0) return;
   const io = new IntersectionObserver(
