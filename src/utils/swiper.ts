@@ -38,19 +38,6 @@ export function swiperStep() {
         : false,
     });
 
-    // Protection : restaurer les styles de .timeline_item si Swiper les a modifiés
-    const timelineItem = wrapper.closest<HTMLElement>('.timeline_item');
-    if (timelineItem) {
-      // Attendre que Swiper ait fini son initialisation
-      requestAnimationFrame(() => {
-        // Forcer le display grid si Swiper l'a modifié
-        const computedDisplay = getComputedStyle(timelineItem).display;
-        if (computedDisplay !== 'grid') {
-          timelineItem.style.display = 'grid';
-        }
-      });
-    }
-
     // Navigation sous 992px, propre à ce wrapper
     const mql = window.matchMedia('(max-width: 991px)');
     const navigationWrap = wrapper.querySelector<HTMLElement>('.swiper-navigation.is-mobile');

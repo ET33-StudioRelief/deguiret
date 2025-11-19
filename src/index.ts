@@ -38,14 +38,13 @@ import {
   swiperCollection,
   swiperCustomPieces,
   swiperProduct,
-  /*swiperStep,*/
+  swiperStep,
   swiperTestimonial,
 } from './utils/swiper';
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
   setupNavbarHoverImages();
-  // Automatic contrast navbar
   setupNavbarAutoContrast('.navbar_light-wrapper');
   setupDarkMode();
   faqDropdown('.faq_question');
@@ -79,7 +78,7 @@ window.Webflow.push(() => {
   }
   //How we make it
   if (window.location?.pathname.includes('/the-making')) {
-    /*swiperStep();*/
+    swiperStep();
     sliderCustomCursor('.step_slider-wrapper', '.swiper.is-step');
   }
   //Custom pieces
