@@ -38,7 +38,7 @@ import {
   swiperCollection,
   swiperCustomPieces,
   swiperProduct,
-  swiperStep,
+  /*swiperStep,*/
   swiperTestimonial,
 } from './utils/swiper';
 
@@ -54,7 +54,6 @@ window.Webflow.push(() => {
   ctaParallax();
   setupLayout2ColMoveUp();
   setupButtonHoverCursor();
-  //Homepage
   if (window.location?.pathname.includes('/')) {
     galleryTextBlock();
     setupWatchesViewToggle();
@@ -80,7 +79,7 @@ window.Webflow.push(() => {
   }
   //How we make it
   if (window.location?.pathname.includes('/the-making')) {
-    swiperStep();
+    /*swiperStep();*/
     sliderCustomCursor('.step_slider-wrapper', '.swiper.is-step');
   }
   //Custom pieces
