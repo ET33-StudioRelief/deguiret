@@ -42,7 +42,8 @@
 /* Steps (nouvelle structure) */
 .story_shadow-img {
   opacity: 0;
-  transition: opacity 300ms ease-in-out;
+  transition: opacity 600ms ease-in-out;
+  transition-delay: 400ms;
 }
 .story_step.is-inview .story_shadow-img {
   opacity: 1;
