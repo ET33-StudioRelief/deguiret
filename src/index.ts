@@ -29,7 +29,6 @@ import {
 } from './typescript/homepage';
 import { setupStoryTestNav } from './typescript/story';
 import { setupTeamInteractions } from './typescript/team';
-import { setupTimeline } from './typescript/timeline';
 import {
   setupProductAccordion,
   setupProductFeaturesTable,
@@ -83,11 +82,9 @@ window.Webflow.push(() => {
   if (window.location?.pathname.includes('/the-making')) {
     swiperStep();
     sliderCustomCursor('.step_slider-wrapper', '.swiper.is-step');
-    setupTimeline();
   }
   //Custom pieces
   if (window.location?.pathname.includes('/custom-pieces')) {
-    setupTimeline();
     swiperCustomPieces();
     sliderCustomCursor('.hero-slider_content', '.swiper.is-custom-pieces-bg');
     setupCustomPiecesProgress('.project-custom_content');
