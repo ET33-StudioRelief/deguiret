@@ -129,7 +129,7 @@ export function setupWatchesViewToggle(
 // Observe rows (gallery + grid) to fade-in on enter viewport
 export function setupWatchesRowsInView(
   rowsSelector = '.watches_gallery_item-wrap, .watches_grid_card',
-  rootMargin = '0px 0px -10% 0px' // déclenche un peu avant
+  rootMargin = '0px 0px -10% 0px'
 ): void {
   const rows = Array.from(document.querySelectorAll<HTMLElement>(rowsSelector));
   if (rows.length === 0) return;
@@ -139,7 +139,7 @@ export function setupWatchesRowsInView(
         if (entry.isIntersecting) {
           const el = entry.target as HTMLElement;
           el.classList.add('is-inview');
-          io.unobserve(el); // première apparition uniquement (jusqu'au prochain switch de vue)
+          io.unobserve(el); //first appearance only (until next view change)
         }
       });
     },
@@ -147,9 +147,9 @@ export function setupWatchesRowsInView(
   );
   rows.forEach((el) => io.observe(el));
 
-  // Redémarre les entrées uniquement lors d’un changement de vue (gallery/grid)
+  // Restart entrances only when view changes (gallery/grid)
   const onViewChanged = () => {
-    // Laisse le layout se stabiliser après les transitions de hauteur
+    // Let the layout stabilize after height transitions
     setTimeout(() => {
       rows.forEach((el) => {
         el.classList.remove('is-inview');
@@ -165,12 +165,12 @@ export function setupWatchesFloat(selector = '.watches_gallery_item-wrap', amp =
   const els = Array.from(document.querySelectorAll<HTMLElement>(selector));
   if (els.length === 0) return;
 
-  // Calcul flottant en fonction de la position dans la fenêtre
+  // Floating calculation based on position in the window
   const updateAll = () => {
     const viewportHeight = window.innerHeight;
     const viewportCenter = viewportHeight / 2;
     els.forEach((el) => {
-      // Réinitialise quand l'élément est caché par Finsweet ([hidden])
+      // Reset when element is hidden by Finsweet ([hidden])
       if (el.hasAttribute('hidden') || el.offsetParent === null) {
         el.style.transform = '';
         return;
@@ -188,23 +188,23 @@ export function setupWatchesFloat(selector = '.watches_gallery_item-wrap', amp =
   window.addEventListener('scroll', scheduleUpdate, { passive: true });
   window.addEventListener('resize', scheduleUpdate);
 
-  // MutationObserver: surveille les changements d'attributs (hidden/style) et la structure
+  // Observe attributes changes (hidden/style) and structure
   const observer = new MutationObserver(() => scheduleUpdate());
   els.forEach((el) => {
     observer.observe(el, { attributes: true, attributeFilter: ['hidden', 'style'] });
   });
 
-  // Surveille aussi le conteneur parent pour les ajouts/suppressions/réordonnancements
+  // Observe the parent container for additions/deletions/reordering
   const parent = els[0].parentElement;
   if (parent) {
     const treeObserver = new MutationObserver(() => scheduleUpdate());
     treeObserver.observe(parent, { childList: true, subtree: false });
   }
 
-  // Recalcul lors des événements internes de la page
+  // Recalcul when internal page events occur
   window.addEventListener('watches:view-changed', scheduleUpdate);
 
-  // Hook Finsweet (si présent): recalcul après application/maj des filtres
+  // Hook Finsweet (if present): recalcul after application/update of filters
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).fsAttributes = (window as any).fsAttributes || [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -215,6 +215,15 @@ export function setupWatchesFloat(selector = '.watches_gallery_item-wrap', amp =
 }
 
 // Sort order toggle for watches collection (oldest/newest)
+/**
+ * Setup sort toggle for watches gallery and grid
+ * Allows toggling between oldest (A-Z) and newest (Z-A) order
+ * @param oldestBtn - Selector for the "oldest" button
+ * @param newestBtn - Selector for the "newest" button
+ * @param labelSelector - Selector for the label that displays current sort order
+ * @param gallerySelector - Selector for the gallery container
+ * @param gridSelector - Selector for the grid container
+ */
 export function setupWatchesSortToggle(
   oldestBtn = '#show-oldest-watches',
   newestBtn = '#show-newest-watches',
@@ -230,6 +239,10 @@ export function setupWatchesSortToggle(
 
   if (!oldestEl || !newestEl) return;
 
+  /**
+   * Assigns original index to each child element based on its initial position
+   * Stores the index in data-originalIndex to allow restoration of initial order
+   */
   const assignOriginalIndex = (container: HTMLElement | null) => {
     if (!container) return;
     Array.from(container.children).forEach((child, index) => {
@@ -240,6 +253,9 @@ export function setupWatchesSortToggle(
     });
   };
 
+  /**
+   * Checks if an element is hidden (via hidden attribute, display:none, or aria-hidden)
+   */
   const isHiddenItem = (el: HTMLElement) => {
     if (el.hasAttribute('hidden')) return true;
     const style = el.getAttribute('style') || '';
@@ -248,6 +264,12 @@ export function setupWatchesSortToggle(
     return false;
   };
 
+  /**
+   * Reorders container children based on their original index
+   * @param container - Container element to reorder
+   * @param ascending - true for ascending order (A-Z), false for descending (Z-A)
+   * @param forceAssign - Force reassignment of original indexes
+   */
   const reorderByOriginalIndex = (
     container: HTMLElement | null,
     ascending: boolean,
@@ -262,25 +284,33 @@ export function setupWatchesSortToggle(
       const bIdx = Number(b.dataset.originalIndex || 0);
       return ascending ? aIdx - bIdx : bIdx - aIdx;
     };
+    // Separate visible and hidden items, sort each group, then append visible first
     const visible = children.filter((el) => !isHiddenItem(el)).sort(sortFn);
     const hidden = children.filter((el) => isHiddenItem(el)).sort(sortFn);
     [...visible, ...hidden].forEach((el) => container.appendChild(el));
   };
 
+  // Initialize: store original indexes for both gallery and grid
   assignOriginalIndex(gallery);
   assignOriginalIndex(grid);
 
-  // Helper: restore initial order
+  /**
+   * Restores initial order (oldest first, A-Z)
+   */
   const restoreInitialOrder = (container: HTMLElement | null) => {
     reorderByOriginalIndex(container, true);
   };
 
-  // Helper: reverse order
+  /**
+   * Reverses order (newest first, Z-A)
+   */
   const reverseOrder = (container: HTMLElement | null) => {
     reorderByOriginalIndex(container, false);
   };
 
-  // Helper: reset des transforms appliqués par setupWatchesFloat pour éviter les décalages au tri
+  /**
+   * Resets transforms applied by setupWatchesFloat to avoid layout shifts after reordering
+   */
   const resetGalleryFloatTransforms = () => {
     const floats = Array.from(document.querySelectorAll<HTMLElement>('.watches_gallery_item-wrap'));
     floats.forEach((el) => {
@@ -288,14 +318,16 @@ export function setupWatchesSortToggle(
     });
   };
 
-  // Helper: update label if present
+  /**
+   * Updates the label text with the current sort order
+   */
   const updateLabel = (fromEl: HTMLElement) => {
     if (!label) return;
     const txt = fromEl.getAttribute('data-text') || '';
     label.textContent = txt;
   };
 
-  // Click on "oldest" → restaure l'ordre initial (A-Z)
+  // Click on "oldest" button → restore initial order (A-Z)
   oldestEl.addEventListener('click', (e) => {
     e.preventDefault();
     restoreInitialOrder(gallery);
@@ -304,7 +336,7 @@ export function setupWatchesSortToggle(
     // Toggle border classes (inverse)
     oldestEl.classList.remove('is-border-tertiary');
     newestEl.classList.add('is-border-tertiary');
-    // Évite les décalages liés au flottement après réordonnancement
+    // Avoid layout shifts from float transforms after reordering
     resetGalleryFloatTransforms();
     // Re-mark feature line after reorder
     galleryTextBlock();
@@ -312,7 +344,7 @@ export function setupWatchesSortToggle(
     window.dispatchEvent(new CustomEvent('watches:view-changed'));
   });
 
-  // Click on "newest" → inverse l'ordre initial (Z-A)
+  // Click on "newest" button → reverse initial order (Z-A)
   newestEl.addEventListener('click', (e) => {
     e.preventDefault();
     reverseOrder(gallery);
@@ -321,7 +353,7 @@ export function setupWatchesSortToggle(
     // Toggle border classes (inverse)
     newestEl.classList.remove('is-border-tertiary');
     oldestEl.classList.add('is-border-tertiary');
-    // Évite les décalages liés au flottement après réordonnancement
+    // Avoid layout shifts from float transforms after reordering
     resetGalleryFloatTransforms();
     // Re-mark feature line after reorder
     galleryTextBlock();
@@ -329,30 +361,30 @@ export function setupWatchesSortToggle(
     window.dispatchEvent(new CustomEvent('watches:view-changed'));
   });
 
-  // Toggle en cliquant sur le label d'ordre: bascule vers l'autre tri actif
+  // Click on label → toggle to the other sort order
   if (label) {
     label.addEventListener('click', (e) => {
       e.preventDefault();
-      // Le bouton actif est celui qui n'a PAS la classe 'is-border-tertiary'
+      // Active button is the one WITHOUT 'is-border-tertiary' class
       const isOldestActive = !oldestEl.classList.contains('is-border-tertiary');
       if (isOldestActive) {
-        // Passer à NEWEST (Z-A)
+        // Switch to NEWEST (Z-A)
         reverseOrder(gallery);
         reverseOrder(grid);
         updateLabel(newestEl);
         newestEl.classList.remove('is-border-tertiary');
         oldestEl.classList.add('is-border-tertiary');
       } else {
-        // Revenir à OLDEST (A-Z)
+        // Switch back to OLDEST (A-Z)
         restoreInitialOrder(gallery);
         restoreInitialOrder(grid);
         updateLabel(oldestEl);
         oldestEl.classList.remove('is-border-tertiary');
         newestEl.classList.add('is-border-tertiary');
       }
-      // Évite les décalages liés au flottement après réordonnancement
+      // Avoid layout shifts from float transforms after reordering
       resetGalleryFloatTransforms();
-      // Met à jour la ligne "feature" et relance les animations d'entrée
+      // Update feature line and restart entrance animations
       galleryTextBlock();
       window.dispatchEvent(new CustomEvent('watches:view-changed'));
     });
@@ -395,10 +427,11 @@ export function setupWatchesGridMobile(
 export function setupWatchesGalleryTextClickBlock(
   itemSelector = '.watches_gallery_item',
   textSelector = '.watches_gallery_txt-wrap',
-  minWidthDesktop = 992
+  minWidthDesktop = 993
 ): void {
   const mql = window.matchMedia(`(min-width: ${minWidthDesktop}px)`);
-  if (!mql.matches) return; // mobile: pas de blocage
+  // Block only if strictly greater than 992px
+  if (!mql.matches) return; // mobile: no blocking
 
   const items = Array.from(document.querySelectorAll<HTMLAnchorElement>(itemSelector));
   if (items.length === 0) return;
@@ -408,6 +441,13 @@ export function setupWatchesGalleryTextClickBlock(
     if (!textWrap) return;
 
     textWrap.addEventListener('click', (ev) => {
+      // Check width at click time (not only at initialization)
+      const currentWidth = window.innerWidth;
+      if (currentWidth < minWidthDesktop) {
+        // Below threshold: let the click bubble up to the parent link
+        return;
+      }
+      // Above threshold: block the click
       ev.preventDefault();
       ev.stopPropagation();
     });
@@ -447,76 +487,4 @@ export function setupEmptyBannerByResults(
   window.addEventListener('resize', () => requestAnimationFrame(update));
 
   update();
-}
-
-// Synchronise un paragraphe unique avec la description de la collection sélectionnée
-export function setupCollectionDescriptionSync(
-  outputSelector = '#collection-description',
-  // Liste cachée servant de source (items CMS) – on prend p:first-of-type comme description
-  sourceListSelector = '.watches_paragraph-wrap .w-dyn-list [fs-list-element="list"]',
-  // Radios du filtre collection
-  radiosSelector = 'form[fs-list-element="filters"] input[fs-list-field="collection"]',
-  // Texte affiché si aucune collection (All) est sélectionnée
-  emptyText: string | null = null
-): void {
-  const output = document.querySelector<HTMLElement>(outputSelector);
-  if (!output) return;
-
-  const srcList = document.querySelector<HTMLElement>(sourceListSelector);
-  if (!srcList) return;
-
-  const items = Array.from(
-    srcList.querySelectorAll<HTMLElement>('[fs-list-element="item"], .w-dyn-item')
-  );
-  if (items.length === 0) return;
-
-  // Construit la map { collectionValue → descriptionText }
-  const valueToText = new Map<string, string>();
-  items.forEach((it) => {
-    const valueEl = it.querySelector<HTMLElement>('[fs-list-field="collection"]');
-    if (!valueEl) return;
-    const key = (valueEl.textContent || '').trim();
-    if (!key) return;
-    const p = it.querySelector<HTMLParagraphElement>('p');
-    const desc = (p?.textContent || '').trim();
-    if (desc) valueToText.set(key, desc);
-  });
-
-  const readSelectedValue = (): string | null => {
-    const radios = Array.from(document.querySelectorAll<HTMLInputElement>(radiosSelector));
-    const checked = radios.find((r) => r.checked);
-    if (!checked) return null;
-    const v = (checked.getAttribute('fs-list-value') || checked.value || '').trim();
-    return v || null; // null si All (valeur vide)
-  };
-
-  const applyOutput = () => {
-    const selected = readSelectedValue();
-    if (!selected) {
-      if (emptyText === null) {
-        // Par défaut: vide
-        output.textContent = '';
-      } else {
-        output.textContent = emptyText;
-      }
-      return;
-    }
-    const txt = valueToText.get(selected) || '';
-    output.textContent = txt;
-  };
-
-  // Écoute changements utilisateur
-  document.addEventListener('change', (e) => {
-    const t = e.target as HTMLElement | null;
-    if (t && t.matches && t.matches('input[fs-list-field="collection"]')) applyOutput();
-  });
-
-  // Après application des filtres Finsweet (sécurité)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (window as any).fsAttributes = (window as any).fsAttributes || [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (window as any).fsAttributes.push(['cmsfilter', () => requestAnimationFrame(applyOutput)]);
-
-  // Initial
-  applyOutput();
 }

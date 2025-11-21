@@ -6,28 +6,14 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
   const teamItems = Array.from(document.querySelectorAll<HTMLElement>('.team_item'));
   if (teamItems.length === 0) return;
 
-  // Centrage précis avec compensation de la navbar sticky
-  const centerAccurate = (el: HTMLElement, behavior: ScrollBehavior = 'smooth') => {
-    const rect = el.getBoundingClientRect();
-    const navbar = document.querySelector<HTMLElement>('.navbar_component');
-    const headerH = navbar ? navbar.clientHeight : 0;
-    const viewport = window.innerHeight || 0;
-    const target = window.scrollY + rect.top + rect.height / 2 - viewport / 2 + headerH / 2;
-    window.scrollTo({ top: Math.max(0, Math.round(target)), behavior });
-  };
-
   const getContentElements = (container: HTMLElement): HTMLElement[] => {
     return Array.from(
       container.querySelectorAll<HTMLElement>('.team_hide-content, .team_right-col')
     );
   };
 
-  const openItem = (item: HTMLElement, shouldScroll = true) => {
+  const openItem = (item: HTMLElement) => {
     item.classList.add('is-open');
-    // Centrer uniquement si demandé (pas lors de l'ouverture initiale)
-    if (shouldScroll) {
-      centerAccurate(item, 'smooth');
-    }
     const contents = getContentElements(item);
     contents.forEach((el) => {
       // Mesure la hauteur naturelle
@@ -45,10 +31,6 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
       };
       el.addEventListener('transitionend', onEnd);
     });
-    // Affinage si on a scrollé: re-centre brièvement pendant l'animation
-    if (shouldScroll) {
-      setTimeout(() => centerAccurate(item, 'auto'), 160);
-    }
   };
 
   const closeItem = (item: HTMLElement) => {
@@ -86,12 +68,12 @@ export function setupTeamInteractions(options?: TeamInteractionsOptions): void {
       } else {
         // Sinon, fermer les autres et ouvrir celui-ci
         closeAll(item);
-        openItem(item, true);
+        openItem(item);
       }
     });
   });
 
   if (options?.openFirst && teamItems[0]) {
-    openItem(teamItems[0], false);
+    openItem(teamItems[0]);
   }
 }

@@ -14,7 +14,7 @@ export function swiperStep() {
     // Pagination et navigation strictement dans le wrapper courant
     const paginationEl = wrapper.querySelector<HTMLElement>('.swiper-pagination.is-step');
 
-    const instance = new Swiper(swiperEl, {
+    new Swiper(swiperEl, {
       modules: [Pagination, Autoplay],
       direction: 'horizontal',
       slidesPerView: 1,
@@ -37,24 +37,6 @@ export function swiperStep() {
           }
         : false,
     });
-
-    // Navigation sous 992px, propre à ce wrapper
-    const mql = window.matchMedia('(max-width: 991px)');
-    const navigationWrap = wrapper.querySelector<HTMLElement>('.swiper-navigation.is-mobile');
-    const prevBtn = navigationWrap?.querySelector('.swiper-button-prev') as HTMLElement | null;
-    const nextBtn = navigationWrap?.querySelector('.swiper-button-next') as HTMLElement | null;
-
-    const updateNav = () => {
-      if (!navigationWrap) return;
-      navigationWrap.style.display = mql.matches ? 'flex' : 'none';
-    };
-
-    if (navigationWrap && prevBtn && nextBtn) {
-      prevBtn.addEventListener('click', () => instance.slidePrev());
-      nextBtn.addEventListener('click', () => instance.slideNext());
-      updateNav();
-      mql.addEventListener('change', updateNav);
-    }
 
     swiperEl.dataset.swiperInitialized = 'true';
   });

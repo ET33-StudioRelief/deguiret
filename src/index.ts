@@ -18,7 +18,6 @@ import { ctaParallax, setupLayout2ColMoveUp } from './typescript/components/sect
 import { setupCustomPiecesProgress } from './typescript/customPieces';
 import {
   galleryTextBlock,
-  setupCollectionDescriptionSync,
   setupEmptyBannerByResults,
   setupWatchesFloat,
   setupWatchesGalleryTextClickBlock,
@@ -62,12 +61,6 @@ window.Webflow.push(() => {
     setupWatchesFloat('.watches_gallery_item-wrap');
     setupWatchesGridMobile();
     setupWatchesGalleryTextClickBlock();
-    setupCollectionDescriptionSync(
-      '#collection-description',
-      '.watches_paragraph-wrap.is-desktop .w-dyn-list [fs-list-element="list"]',
-      'form[fs-list-element="filters"] input[fs-list-field="collection"]',
-      ''
-    );
     setupNavbarBackgroundNonHero();
   }
   //Who we are
@@ -79,7 +72,6 @@ window.Webflow.push(() => {
   //How we make it
   if (window.location?.pathname.includes('/the-making')) {
     swiperStep();
-    sliderCustomCursor('.step_slider-wrapper', '.swiper.is-step');
   }
   //Custom pieces
   if (window.location?.pathname.includes('/custom-pieces')) {
@@ -87,7 +79,7 @@ window.Webflow.push(() => {
     sliderCustomCursor('.hero-slider_content', '.swiper.is-custom-pieces-bg');
     setupCustomPiecesProgress('.project-custom_content');
     swiperTestimonial();
-    sliderCustomCursor('.section_testimonial', '.swiper.is-testimonial');
+    sliderCustomCursor('.testimonial_left-col', '.swiper.is-testimonial');
   }
   //Our story
   if (window.location?.pathname.includes('/our-story')) {
