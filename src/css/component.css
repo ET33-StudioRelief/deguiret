@@ -123,3 +123,9 @@
 .body-dark-mode .navbar_dark-wrapper .dark-mode-on {
   display: block !important;
 }
+
+/* Toggle switch theme icons - transition d'opacité */
+.light-mode-on,
+.dark-mode-on {
+  transition: opacity 250ms ease;
+}
