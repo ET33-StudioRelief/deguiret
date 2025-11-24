@@ -86,8 +86,28 @@ export function setupWatchesViewToggle(
     if (txt) label.textContent = txt.toUpperCase();
   };
 
+  /**
+   * Scroll to watches_content when view changes
+   */
+  const scrollToWatchesContent = () => {
+    const target = document.querySelector<HTMLElement>('.watches_content');
+    if (!target) return;
+
+    const rect = target.getBoundingClientRect();
+    const navbar = document.querySelector<HTMLElement>('.navbar_component');
+    const navbarHeight = navbar ? navbar.offsetHeight : 0;
+    const targetPosition = window.scrollY + rect.top - navbarHeight - 20; // 20px de marge
+
+    window.scrollTo({
+      top: Math.max(0, targetPosition),
+      behavior: 'smooth',
+    });
+  };
+
   galleryEl.addEventListener('click', (e) => {
     e.preventDefault();
+    // Scroll to watches_content before view change
+    scrollToWatchesContent();
     applyLabel(galleryEl);
     setHeights(true);
     // Retire sur le bouton cliqué, ajoute sur l'autre
@@ -97,6 +117,8 @@ export function setupWatchesViewToggle(
 
   gridEl.addEventListener('click', (e) => {
     e.preventDefault();
+    // Scroll to watches_content before view change
+    scrollToWatchesContent();
     applyLabel(gridEl);
     setHeights(false);
     // Retire sur le bouton cliqué, ajoute sur l'autre
@@ -107,6 +129,8 @@ export function setupWatchesViewToggle(
   // Toggle en cliquant sur le label: bascule vers l'autre vue que celle actuellement affichée
   label.addEventListener('click', (e) => {
     e.preventDefault();
+    // Scroll to watches_content before view change
+    scrollToWatchesContent();
     // Détermine la vue active via les classes des boutons:
     // le bouton actif est celui qui n'a PAS la classe 'is-border-tertiary'
     const isGalleryActive = !galleryEl.classList.contains('is-border-tertiary');
@@ -327,6 +351,24 @@ export function setupWatchesSortToggle(
     label.textContent = txt;
   };
 
+  /**
+   * Scroll to watches_content when sort order changes
+   */
+  const scrollToWatchesContent = () => {
+    const target = document.querySelector<HTMLElement>('.watches_content');
+    if (!target) return;
+
+    const rect = target.getBoundingClientRect();
+    const navbar = document.querySelector<HTMLElement>('.navbar_component');
+    const navbarHeight = navbar ? navbar.offsetHeight : 0;
+    const targetPosition = window.scrollY + rect.top - navbarHeight - 20; // 20px de marge
+
+    window.scrollTo({
+      top: Math.max(0, targetPosition),
+      behavior: 'smooth',
+    });
+  };
+
   // Click on "oldest" button → restore initial order (A-Z)
   oldestEl.addEventListener('click', (e) => {
     e.preventDefault();
@@ -342,6 +384,8 @@ export function setupWatchesSortToggle(
     galleryTextBlock();
     // Trigger view-changed to re-observe items for animation
     window.dispatchEvent(new CustomEvent('watches:view-changed'));
+    // Scroll to watches_content
+    setTimeout(scrollToWatchesContent, 100);
   });
 
   // Click on "newest" button → reverse initial order (Z-A)
@@ -359,6 +403,8 @@ export function setupWatchesSortToggle(
     galleryTextBlock();
     // Trigger view-changed to re-observe items for animation
     window.dispatchEvent(new CustomEvent('watches:view-changed'));
+    // Scroll to watches_content
+    setTimeout(scrollToWatchesContent, 100);
   });
 
   // Click on label → toggle to the other sort order
@@ -387,6 +433,8 @@ export function setupWatchesSortToggle(
       // Update feature line and restart entrance animations
       galleryTextBlock();
       window.dispatchEvent(new CustomEvent('watches:view-changed'));
+      // Scroll to watches_content
+      setTimeout(scrollToWatchesContent, 100);
     });
   }
 }
@@ -487,4 +535,46 @@ export function setupEmptyBannerByResults(
   window.addEventListener('resize', () => requestAnimationFrame(update));
 
   update();
+}
+
+// Scroll to sticky-filter when a filter is selected
+export function setupWatchesFilterScrollToTop(
+  targetSelector = '.watches_content',
+  filterSelector = 'form[fs-list-element="filters"] input[type="radio"]'
+): void {
+  const target = document.querySelector<HTMLElement>(targetSelector);
+  if (!target) return;
+
+  const scrollToFilter = () => {
+    const rect = target.getBoundingClientRect();
+    const navbar = document.querySelector<HTMLElement>('.navbar_component');
+    const navbarHeight = navbar ? navbar.offsetHeight : 0;
+    const targetPosition = window.scrollY + rect.top - navbarHeight - 20; // 20px de marge
+
+    window.scrollTo({
+      top: Math.max(0, targetPosition),
+      behavior: 'smooth',
+    });
+  };
+
+  // Écouter les changements sur les inputs radio des filtres
+  document.addEventListener('change', (e) => {
+    const target = e.target as HTMLElement;
+    if (target.matches && target.matches(filterSelector)) {
+      // Petit délai pour laisser Finsweet appliquer les filtres
+      setTimeout(scrollToFilter, 100);
+    }
+  });
+
+  // Hook Finsweet pour capturer les changements de filtres
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).fsAttributes = (window as any).fsAttributes || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).fsAttributes.push([
+    'cmsfilter',
+    () => {
+      // Scroll après que les filtres soient appliqués
+      setTimeout(scrollToFilter, 150);
+    },
+  ]);
 }
