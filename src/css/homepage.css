@@ -191,7 +191,7 @@
 /* Décalage : apparition avec léger délai */
 .watches_gallery_wrapper.is-fading-in,
 .watches_grid_wrapper.is-fading-in {
-  transition-delay: 300ms;
+  transition-delay: 600ms;
 }
 .watches_gallery_wrapper.is-hidden,
 .watches_grid_wrapper.is-hidden {

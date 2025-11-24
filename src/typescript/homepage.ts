@@ -179,27 +179,26 @@ export function setupWatchesViewToggle(): void {
   };
 
   // Fonction pour scroller vers watches_content
-  // COMMENTÉ POUR TEST
-  // const scrollToWatchesContent = () => {
-  //   const target = document.querySelector<HTMLElement>('.watches_content');
-  //   if (!target) return;
+  const scrollToWatchesContent = () => {
+    const target = document.querySelector<HTMLElement>('.watches_content');
+    if (!target) return;
 
-  //   const rect = target.getBoundingClientRect();
-  //   const navbar = document.querySelector<HTMLElement>('.navbar_component');
-  //   const navbarHeight = navbar ? navbar.offsetHeight : 0;
-  //   const targetPosition = window.scrollY + rect.top - navbarHeight - 20; // 20px de marge
+    const rect = target.getBoundingClientRect();
+    const navbar = document.querySelector<HTMLElement>('.navbar_component');
+    const navbarHeight = navbar ? navbar.offsetHeight : 0;
+    const targetPosition = window.scrollY + rect.top - navbarHeight - 20; // 20px de marge
 
-  //   window.scrollTo({
-  //     top: Math.max(0, targetPosition),
-  //     behavior: 'smooth',
-  //   });
-  // };
+    window.scrollTo({
+      top: Math.max(0, targetPosition),
+      behavior: 'smooth',
+    });
+  };
 
   // Click sur Gallery : afficher gallery, masquer grid
   galleryBtn.addEventListener('click', (e) => {
     e.preventDefault();
     // Scroll to watches_content before view change
-    // scrollToWatchesContent(); // COMMENTÉ POUR TEST
+    scrollToWatchesContent();
     // Disparition immédiate de grid
     gridWrap.classList.remove('is-fading-in');
     gridWrap.classList.add('is-fading-out');
@@ -220,7 +219,7 @@ export function setupWatchesViewToggle(): void {
   gridBtn.addEventListener('click', (e) => {
     e.preventDefault();
     // Scroll to watches_content before view change
-    // scrollToWatchesContent(); // COMMENTÉ POUR TEST
+    scrollToWatchesContent();
     // Disparition immédiate de gallery
     galleryWrap.classList.remove('is-fading-in');
     galleryWrap.classList.add('is-fading-out');
