@@ -178,8 +178,20 @@
 .watches_grid_wrapper {
   overflow: hidden;
   transition:
-    height 320ms ease,
-    opacity 220ms ease;
+    opacity 300ms ease-in-out,
+    z-index 0ms ease;
+}
+
+/* Décalage : disparition immédiate */
+.watches_gallery_wrapper.is-fading-out,
+.watches_grid_wrapper.is-fading-out {
+  transition-delay: 0ms;
+}
+
+/* Décalage : apparition avec léger délai */
+.watches_gallery_wrapper.is-fading-in,
+.watches_grid_wrapper.is-fading-in {
+  transition-delay: 300ms;
 }
 .watches_gallery_wrapper.is-hidden,
 .watches_grid_wrapper.is-hidden {
