@@ -16,137 +16,225 @@ export function galleryTextBlock(
 }
 
 // Toggle between Gallery and Grid views, update label and heights
-export function setupWatchesViewToggle(
-  galleryBtn = '#show-gallery-watches',
-  gridBtn = '#show-grid-watches',
-  labelSelector = '#view-type-data-text',
-  galleryWrapper = '.watches_gallery_wrapper',
-  gridWrapper = '.watches_grid_wrapper'
-): void {
-  const galleryEl = document.querySelector<HTMLElement>(galleryBtn);
-  const gridEl = document.querySelector<HTMLElement>(gridBtn);
-  const label = document.querySelector<HTMLElement>(labelSelector);
-  const galleryWrap = document.querySelector<HTMLElement>(galleryWrapper);
-  const gridWrap = document.querySelector<HTMLElement>(gridWrapper);
-  if (!galleryEl || !gridEl || !label || !galleryWrap || !gridWrap) return;
+// ANCIENNE VERSION - COMMENTÉE POUR TEST
+// export function setupWatchesViewToggle(
+//   galleryBtn = '#show-gallery-watches',
+//   gridBtn = '#show-grid-watches',
+//   labelSelector = '#view-type-data-text',
+//   galleryWrapper = '.watches_gallery_wrapper',
+//   gridWrapper = '.watches_grid_wrapper'
+// ): void {
+//   const galleryEl = document.querySelector<HTMLElement>(galleryBtn);
+//   const gridEl = document.querySelector<HTMLElement>(gridBtn);
+//   const label = document.querySelector<HTMLElement>(labelSelector);
+//   const galleryWrap = document.querySelector<HTMLElement>(galleryWrapper);
+//   const gridWrap = document.querySelector<HTMLElement>(gridWrapper);
+//   if (!galleryEl || !gridEl || !label || !galleryWrap || !gridWrap) return;
 
-  const setHeights = (showGallery: boolean) => {
-    const animate = (el: HTMLElement, expand: boolean, done?: () => void) => {
-      const currentHeight = el.offsetHeight; // current rendered height
-      const targetHeight = expand ? el.scrollHeight : 0;
-      // Prepare
-      el.style.overflow = 'hidden';
-      el.style.transition = 'height 360ms ease, opacity 240ms ease';
-      // Set starting height
-      el.style.height = currentHeight + 'px';
-      el.style.opacity = expand ? '0' : '1';
-      // In next frame, go to target
-      requestAnimationFrame(() => {
-        el.style.height = targetHeight + 'px';
-        el.style.opacity = expand ? '1' : '0';
-      });
-      // Cleanup
-      const onEnd = () => {
-        el.removeEventListener('transitionend', onEnd);
-        if (expand) {
-          el.style.height = 'auto';
-          el.style.overflow = '';
-        } else {
-          el.style.height = '0px';
-          el.style.overflow = 'hidden';
-        }
-        if (done) done();
-      };
-      el.addEventListener('transitionend', onEnd);
-    };
+//   const setHeights = (showGallery: boolean) => {
+//     const animate = (el: HTMLElement, expand: boolean, done?: () => void) => {
+//       const currentHeight = el.offsetHeight; // current rendered height
+//       const targetHeight = expand ? el.scrollHeight : 0;
+//       // Prepare
+//       el.style.overflow = 'hidden';
+//       el.style.transition = 'height 360ms ease, opacity 240ms ease';
+//       // Set starting height
+//       el.style.height = currentHeight + 'px';
+//       el.style.opacity = expand ? '0' : '1';
+//       // In next frame, go to target
+//       requestAnimationFrame(() => {
+//         el.style.height = targetHeight + 'px';
+//         el.style.opacity = expand ? '1' : '0';
+//       });
+//       // Cleanup
+//       const onEnd = () => {
+//         el.removeEventListener('transitionend', onEnd);
+//         if (expand) {
+//           el.style.height = 'auto';
+//           el.style.overflow = '';
+//         } else {
+//           el.style.height = '0px';
+//           el.style.overflow = 'hidden';
+//         }
+//         if (done) done();
+//       };
+//       el.addEventListener('transitionend', onEnd);
+//     };
 
-    if (showGallery) {
-      // Séquence: fermer Grid puis ouvrir Gallery pour éviter les à-coups de reflow
-      animate(gridWrap, false, () => {
-        // Assure une frame entre les deux pour laisser le layout se stabiliser
-        requestAnimationFrame(() =>
-          animate(galleryWrap, true, () => {
-            // Notifie que la vue a changé (utilisé pour relancer les entrances)
-            window.dispatchEvent(new CustomEvent('watches:view-changed'));
-          })
-        );
-      });
-    } else {
-      // Ouverture Grid peut rester simultanée, elle est déjà smooth
-      animate(galleryWrap, false);
-      animate(gridWrap, true, () => {
-        // Notifie que la vue a changé (utilisé pour relancer les entrances)
-        window.dispatchEvent(new CustomEvent('watches:view-changed'));
-      });
-    }
-  };
+//     if (showGallery) {
+//       // Séquence: fermer Grid puis ouvrir Gallery pour éviter les à-coups de reflow
+//       animate(gridWrap, false, () => {
+//         // Assure une frame entre les deux pour laisser le layout se stabiliser
+//         requestAnimationFrame(() =>
+//           animate(galleryWrap, true, () => {
+//             // Notifie que la vue a changé (utilisé pour relancer les entrances)
+//             window.dispatchEvent(new CustomEvent('watches:view-changed'));
+//           })
+//         );
+//       });
+//     } else {
+//       // Ouverture Grid peut rester simultanée, elle est déjà smooth
+//       animate(galleryWrap, false);
+//       animate(gridWrap, true, () => {
+//         // Notifie que la vue a changé (utilisé pour relancer les entrances)
+//         window.dispatchEvent(new CustomEvent('watches:view-changed'));
+//       });
+//     }
+//   };
 
+//   const applyLabel = (fromEl: HTMLElement) => {
+//     const txt = fromEl.getAttribute('data-text') || '';
+//     if (txt) label.textContent = txt.toUpperCase();
+//   };
+
+//   /**
+//    * Scroll to watches_content when view changes
+//    */
+//   // COMMENTÉ POUR TEST
+//   // const scrollToWatchesContent = () => {
+//   //   const target = document.querySelector<HTMLElement>('.watches_content');
+//   //   if (!target) return;
+
+//   //   const rect = target.getBoundingClientRect();
+//   //   const navbar = document.querySelector<HTMLElement>('.navbar_component');
+//   //   const navbarHeight = navbar ? navbar.offsetHeight : 0;
+//   //   const targetPosition = window.scrollY + rect.top - navbarHeight - 20; // 20px de marge
+
+//   //   window.scrollTo({
+//   //     top: Math.max(0, targetPosition),
+//   //     behavior: 'smooth',
+//   //   });
+//   // };
+
+//   galleryEl.addEventListener('click', (e) => {
+//     e.preventDefault();
+//     // Scroll to watches_content before view change
+//     // scrollToWatchesContent(); // COMMENTÉ POUR TEST
+//     applyLabel(galleryEl);
+//     // Délai pour laisser le scroll commencer avant le changement de hauteur
+//     setTimeout(() => {
+//       setHeights(true);
+//     }, 150);
+//     // Retire sur le bouton cliqué, ajoute sur l'autre
+//     galleryEl.classList.remove('is-border-tertiary');
+//     gridEl.classList.add('is-border-tertiary');
+//   });
+
+//   gridEl.addEventListener('click', (e) => {
+//     e.preventDefault();
+//     // Scroll to watches_content before view change
+//     // scrollToWatchesContent(); // COMMENTÉ POUR TEST
+//     applyLabel(gridEl);
+//     // Délai pour laisser le scroll commencer avant le changement de hauteur
+//     setTimeout(() => {
+//       setHeights(false);
+//     }, 150);
+//     // Retire sur le bouton cliqué, ajoute sur l'autre
+//     gridEl.classList.remove('is-border-tertiary');
+//     galleryEl.classList.add('is-border-tertiary');
+//   });
+
+//   // Toggle en cliquant sur le label: bascule vers l'autre vue que celle actuellement affichée
+//   label.addEventListener('click', (e) => {
+//     e.preventDefault();
+//     // Scroll to watches_content before view change
+//     // scrollToWatchesContent(); // COMMENTÉ POUR TEST
+//     // Détermine la vue active via les classes des boutons:
+//     // le bouton actif est celui qui n'a PAS la classe 'is-border-tertiary'
+//     const isGalleryActive = !galleryEl.classList.contains('is-border-tertiary');
+//     // Délai pour laisser le scroll commencer avant le changement de hauteur
+//     setTimeout(() => {
+//       if (isGalleryActive) {
+//         // Aller vers Grid
+//         applyLabel(gridEl);
+//         setHeights(false);
+//         gridEl.classList.remove('is-border-tertiary');
+//         galleryEl.classList.add('is-border-tertiary');
+//       } else {
+//         // Aller vers Gallery
+//         applyLabel(galleryEl);
+//         setHeights(true);
+//         galleryEl.classList.remove('is-border-tertiary');
+//         gridEl.classList.add('is-border-tertiary');
+//       }
+//     }, 150);
+//   });
+// }
+
+// NOUVELLE VERSION - SIMPLIFIÉE ET MOINS ÉNERGIVORE
+export function setupWatchesViewToggle(): void {
+  const galleryBtn = document.querySelector<HTMLElement>('#show-gallery-watches');
+  const gridBtn = document.querySelector<HTMLElement>('#show-grid-watches');
+  const label = document.querySelector<HTMLElement>('#view-type-data-text');
+  const galleryWrap = document.querySelector<HTMLElement>('.watches_gallery_wrapper');
+  const gridWrap = document.querySelector<HTMLElement>('.watches_grid_wrapper');
+
+  if (!galleryBtn || !gridBtn || !galleryWrap || !gridWrap) return;
+
+  // Fonction pour mettre à jour le texte du label
   const applyLabel = (fromEl: HTMLElement) => {
+    if (!label) return;
     const txt = fromEl.getAttribute('data-text') || '';
     if (txt) label.textContent = txt.toUpperCase();
   };
 
-  /**
-   * Scroll to watches_content when view changes
-   */
-  const scrollToWatchesContent = () => {
-    const target = document.querySelector<HTMLElement>('.watches_content');
-    if (!target) return;
+  // Fonction pour scroller vers watches_content
+  // COMMENTÉ POUR TEST
+  // const scrollToWatchesContent = () => {
+  //   const target = document.querySelector<HTMLElement>('.watches_content');
+  //   if (!target) return;
 
-    const rect = target.getBoundingClientRect();
-    const navbar = document.querySelector<HTMLElement>('.navbar_component');
-    const navbarHeight = navbar ? navbar.offsetHeight : 0;
-    const targetPosition = window.scrollY + rect.top - navbarHeight - 20; // 20px de marge
+  //   const rect = target.getBoundingClientRect();
+  //   const navbar = document.querySelector<HTMLElement>('.navbar_component');
+  //   const navbarHeight = navbar ? navbar.offsetHeight : 0;
+  //   const targetPosition = window.scrollY + rect.top - navbarHeight - 20; // 20px de marge
 
-    window.scrollTo({
-      top: Math.max(0, targetPosition),
-      behavior: 'smooth',
-    });
-  };
+  //   window.scrollTo({
+  //     top: Math.max(0, targetPosition),
+  //     behavior: 'smooth',
+  //   });
+  // };
 
-  galleryEl.addEventListener('click', (e) => {
+  // Click sur Gallery : afficher gallery, masquer grid
+  galleryBtn.addEventListener('click', (e) => {
     e.preventDefault();
     // Scroll to watches_content before view change
-    scrollToWatchesContent();
-    applyLabel(galleryEl);
-    setHeights(true);
+    // scrollToWatchesContent(); // COMMENTÉ POUR TEST
+    // Disparition immédiate de grid
+    gridWrap.classList.remove('is-fading-in');
+    gridWrap.classList.add('is-fading-out');
+    gridWrap.style.opacity = '0';
+    gridWrap.style.zIndex = '-1';
+    // Apparition avec délai de gallery
+    galleryWrap.classList.remove('is-fading-out');
+    galleryWrap.classList.add('is-fading-in');
+    galleryWrap.style.opacity = '1';
+    galleryWrap.style.zIndex = '1';
+    applyLabel(galleryBtn);
     // Retire sur le bouton cliqué, ajoute sur l'autre
-    galleryEl.classList.remove('is-border-tertiary');
-    gridEl.classList.add('is-border-tertiary');
+    galleryBtn.classList.remove('is-border-tertiary');
+    gridBtn.classList.add('is-border-tertiary');
   });
 
-  gridEl.addEventListener('click', (e) => {
+  // Click sur Grid : afficher grid, masquer gallery
+  gridBtn.addEventListener('click', (e) => {
     e.preventDefault();
     // Scroll to watches_content before view change
-    scrollToWatchesContent();
-    applyLabel(gridEl);
-    setHeights(false);
+    // scrollToWatchesContent(); // COMMENTÉ POUR TEST
+    // Disparition immédiate de gallery
+    galleryWrap.classList.remove('is-fading-in');
+    galleryWrap.classList.add('is-fading-out');
+    galleryWrap.style.opacity = '0';
+    galleryWrap.style.zIndex = '-1';
+    // Apparition avec délai de grid
+    gridWrap.classList.remove('is-fading-out');
+    gridWrap.classList.add('is-fading-in');
+    gridWrap.style.opacity = '1';
+    gridWrap.style.zIndex = '1';
+    applyLabel(gridBtn);
     // Retire sur le bouton cliqué, ajoute sur l'autre
-    gridEl.classList.remove('is-border-tertiary');
-    galleryEl.classList.add('is-border-tertiary');
-  });
-
-  // Toggle en cliquant sur le label: bascule vers l'autre vue que celle actuellement affichée
-  label.addEventListener('click', (e) => {
-    e.preventDefault();
-    // Scroll to watches_content before view change
-    scrollToWatchesContent();
-    // Détermine la vue active via les classes des boutons:
-    // le bouton actif est celui qui n'a PAS la classe 'is-border-tertiary'
-    const isGalleryActive = !galleryEl.classList.contains('is-border-tertiary');
-    if (isGalleryActive) {
-      // Aller vers Grid
-      applyLabel(gridEl);
-      setHeights(false);
-      gridEl.classList.remove('is-border-tertiary');
-      galleryEl.classList.add('is-border-tertiary');
-    } else {
-      // Aller vers Gallery
-      applyLabel(galleryEl);
-      setHeights(true);
-      galleryEl.classList.remove('is-border-tertiary');
-      gridEl.classList.add('is-border-tertiary');
-    }
+    gridBtn.classList.remove('is-border-tertiary');
+    galleryBtn.classList.add('is-border-tertiary');
   });
 }
 
@@ -185,6 +273,7 @@ export function setupWatchesRowsInView(
   window.addEventListener('watches:view-changed', onViewChanged);
 }
 
+// Floating effect for watches gallery items
 export function setupWatchesFloat(selector = '.watches_gallery_item-wrap', amp = -50): void {
   const els = Array.from(document.querySelectorAll<HTMLElement>(selector));
   if (els.length === 0) return;
@@ -569,7 +658,7 @@ function closeAllDropdowns(): void {
   });
 }
 
-// Scroll to sticky-filter when a filter is selected
+// Scroll to TOP when a filter is selected
 export function setupWatchesFilterScrollToTop(
   targetSelector = '.watches_content',
   filterSelector = 'form[fs-list-element="filters"] input[type="radio"]'
