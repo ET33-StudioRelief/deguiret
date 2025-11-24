@@ -152,6 +152,23 @@ export function setupNavbarAutoContrast(
   window.addEventListener('resize', onResize);
   evaluate();
 }
+
+// Enable menu opening by clicking on navbar_menu-txt
+export function setupNavbarMenuTextClick(): void {
+  const menuText = document.querySelector<HTMLElement>('.navbar_menu-txt');
+  const menuButton = document.querySelector<HTMLElement>('.navbar_menu-button, .w-nav-button');
+
+  if (!menuText || !menuButton) return;
+
+  menuText.addEventListener('click', () => {
+    // Déclencher un clic sur le bouton menu pour ouvrir/fermer le menu
+    menuButton.click();
+  });
+
+  // Optionnel: ajouter un style cursor pointer pour indiquer que c'est cliquable
+  menuText.style.cursor = 'pointer';
+}
+
 // Navbar background when not overlapping a hero section
 export function setupNavbarBackgroundNonHero(
   navbarSelector = '.navbar_component',

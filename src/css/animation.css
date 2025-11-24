@@ -16,7 +16,7 @@
         [class*='section_step']
       ):not([class*='section_cta']):not([class*='section_story']):not(
         [class*='section_nav-product']
-      ):not([class*='section_timeline']) {
+      ):not([class*='section_timeline']):not([class*='section_legal']) {
       animation-name: fadeIn;
       animation-duration: 200ms;
       animation-timing-function: ease-out;

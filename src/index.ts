@@ -12,6 +12,7 @@ import {
   setupNavbarAutoContrast,
   setupNavbarBackgroundNonHero,
   setupNavbarHoverImages,
+  setupNavbarMenuTextClick,
   setupNavbarVariantOnMobile,
 } from './typescript/components/navbar';
 import { ctaParallax, setupLayout2ColMoveUp } from './typescript/components/section';
@@ -19,6 +20,7 @@ import { setupCustomPiecesProgress } from './typescript/customPieces';
 import {
   galleryTextBlock,
   setupEmptyBannerByResults,
+  setupWatchesFilterScrollToTop,
   setupWatchesFloat,
   setupWatchesGalleryTextClickBlock,
   setupWatchesGridMobile,
@@ -45,6 +47,7 @@ window.Webflow ||= [];
 window.Webflow.push(() => {
   setupNavbarHoverImages();
   setupNavbarAutoContrast('.navbar_light-wrapper');
+  setupNavbarMenuTextClick();
   setupDarkMode();
   faqDropdown('.faq_question');
   setupScrollTop('scroll-top', 200);
@@ -61,6 +64,7 @@ window.Webflow.push(() => {
     setupWatchesFloat('.watches_gallery_item-wrap');
     setupWatchesGridMobile();
     setupWatchesGalleryTextClickBlock();
+    setupWatchesFilterScrollToTop();
     setupNavbarBackgroundNonHero();
   }
   //Who we are
