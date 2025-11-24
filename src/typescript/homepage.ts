@@ -537,6 +537,38 @@ export function setupEmptyBannerByResults(
   update();
 }
 
+// Close Webflow dropdowns when a filter is selected
+function closeAllDropdowns(): void {
+  // Trouver tous les dropdowns ouverts
+  const openDropdowns = document.querySelectorAll<HTMLElement>('.w-dropdown.w--open');
+  openDropdowns.forEach((dropdown) => {
+    const toggle = dropdown.querySelector<HTMLElement>('.w-dropdown-toggle');
+    const list = dropdown.querySelector<HTMLElement>('.w-dropdown-list');
+
+    if (toggle) {
+      toggle.classList.remove('w--open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+    if (list) {
+      list.classList.remove('w--open');
+    }
+    dropdown.classList.remove('w--open');
+  });
+
+  // Aussi chercher les toggles et lists directement (au cas où le parent n'a pas w--open)
+  const openToggles = document.querySelectorAll<HTMLElement>('.w-dropdown-toggle.w--open');
+  const openLists = document.querySelectorAll<HTMLElement>('.w-dropdown-list.w--open');
+
+  openToggles.forEach((toggle) => {
+    toggle.classList.remove('w--open');
+    toggle.setAttribute('aria-expanded', 'false');
+  });
+
+  openLists.forEach((list) => {
+    list.classList.remove('w--open');
+  });
+}
+
 // Scroll to sticky-filter when a filter is selected
 export function setupWatchesFilterScrollToTop(
   targetSelector = '.watches_content',
@@ -561,6 +593,8 @@ export function setupWatchesFilterScrollToTop(
   document.addEventListener('change', (e) => {
     const target = e.target as HTMLElement;
     if (target.matches && target.matches(filterSelector)) {
+      // Fermer les dropdowns immédiatement
+      closeAllDropdowns();
       // Petit délai pour laisser Finsweet appliquer les filtres
       setTimeout(scrollToFilter, 100);
     }
@@ -573,6 +607,8 @@ export function setupWatchesFilterScrollToTop(
   (window as any).fsAttributes.push([
     'cmsfilter',
     () => {
+      // Fermer les dropdowns après application des filtres
+      closeAllDropdowns();
       // Scroll après que les filtres soient appliqués
       setTimeout(scrollToFilter, 150);
     },
