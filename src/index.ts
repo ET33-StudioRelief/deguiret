@@ -9,7 +9,7 @@ import {
   svgComponent,
 } from './typescript/components/global';
 import {
-  /*initNavbarScroll,*/
+  initNavbarScroll,
   setupNavbarAutoContrast,
   setupNavbarBackgroundNonHero,
   setupNavbarHoverImages,
@@ -49,7 +49,7 @@ window.Webflow.push(() => {
   setupNavbarHoverImages();
   setupNavbarAutoContrast('.navbar_light-wrapper');
   setupNavbarMenuTextClick();
-  /*initNavbarScroll();*/
+  initNavbarScroll();
   setupDarkMode();
   faqDropdown('.faq_question');
   setupScrollTop('scroll-top', 200);
