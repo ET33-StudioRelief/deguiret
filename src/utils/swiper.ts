@@ -152,7 +152,7 @@ export function swiperProduct(): void {
     const paginationEl = container.querySelector<HTMLElement>('.swiper-pagination.is-product');
 
     // Init main slider with pagination module
-    const mainInstance = new Swiper(main, {
+    new Swiper(main, {
       modules: [Pagination],
       direction: 'horizontal',
       slidesPerView: 1,
@@ -172,24 +172,6 @@ export function swiperProduct(): void {
     });
 
     main.dataset.swiperInitialized = 'true';
-
-    // Navigation sous 992px si des boutons existent (product)
-    const mql = window.matchMedia('(max-width: 991px)');
-    const navigationWrap = container.querySelector(
-      '.swiper-navigation.is-mobile.is-product'
-    ) as HTMLElement | null;
-    const prevBtn = navigationWrap?.querySelector('.swiper-button-prev') as HTMLElement | null;
-    const nextBtn = navigationWrap?.querySelector('.swiper-button-next') as HTMLElement | null;
-    const updateNav = () => {
-      if (!navigationWrap) return;
-      navigationWrap.style.display = mql.matches ? 'flex' : 'none';
-    };
-    if (navigationWrap && prevBtn && nextBtn) {
-      prevBtn.addEventListener('click', () => mainInstance.slidePrev());
-      nextBtn.addEventListener('click', () => mainInstance.slideNext());
-      updateNav();
-      mql.addEventListener('change', updateNav);
-    }
   });
 }
 

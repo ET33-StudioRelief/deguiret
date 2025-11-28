@@ -221,7 +221,7 @@ export function setupNavbarBackgroundNonHero(
 }
 
 // Navbar hide/show on scroll down/up
-export function initNavbarScroll(): void {
+/*export function initNavbarScroll(): void {
   const navbar = document.querySelector<HTMLElement>('.navbar_component');
 
   if (!navbar) {
@@ -258,4 +258,4 @@ export function initNavbarScroll(): void {
   };
 
   window.addEventListener('scroll', handleScroll, { passive: true });
-}
+}*/
