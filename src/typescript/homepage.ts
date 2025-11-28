@@ -235,6 +235,50 @@ export function setupWatchesViewToggle(): void {
     gridBtn.classList.remove('is-border-tertiary');
     galleryBtn.classList.add('is-border-tertiary');
   });
+
+  // Click sur le label : basculer vers l'autre vue
+  if (label) {
+    label.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Scroll to watches_content before view change
+      scrollToWatchesContent();
+      // Détermine la vue active via les classes des boutons:
+      // le bouton actif est celui qui n'a PAS la classe 'is-border-tertiary'
+      const isGalleryActive = !galleryBtn.classList.contains('is-border-tertiary');
+
+      if (isGalleryActive) {
+        // Bascule vers Grid
+        // Disparition immédiate de gallery
+        galleryWrap.classList.remove('is-fading-in');
+        galleryWrap.classList.add('is-fading-out');
+        galleryWrap.style.opacity = '0';
+        galleryWrap.style.zIndex = '-1';
+        // Apparition avec délai de grid
+        gridWrap.classList.remove('is-fading-out');
+        gridWrap.classList.add('is-fading-in');
+        gridWrap.style.opacity = '1';
+        gridWrap.style.zIndex = '1';
+        applyLabel(gridBtn);
+        gridBtn.classList.remove('is-border-tertiary');
+        galleryBtn.classList.add('is-border-tertiary');
+      } else {
+        // Bascule vers Gallery
+        // Disparition immédiate de grid
+        gridWrap.classList.remove('is-fading-in');
+        gridWrap.classList.add('is-fading-out');
+        gridWrap.style.opacity = '0';
+        gridWrap.style.zIndex = '-1';
+        // Apparition avec délai de gallery
+        galleryWrap.classList.remove('is-fading-out');
+        galleryWrap.classList.add('is-fading-in');
+        galleryWrap.style.opacity = '1';
+        galleryWrap.style.zIndex = '1';
+        applyLabel(galleryBtn);
+        galleryBtn.classList.remove('is-border-tertiary');
+        gridBtn.classList.add('is-border-tertiary');
+      }
+    });
+  }
 }
 
 // Observe rows (gallery + grid) to fade-in on enter viewport

@@ -160,6 +160,9 @@ export function sliderCustomCursor(
  */
 export function setupButtonHoverCursor(buttonSelector = '.button', sizePx = 24): void {
   const buttons = Array.from(document.querySelectorAll<HTMLElement>(buttonSelector));
+  // .filter(
+  //   (btn) => btn.id !== 'buy-btn'
+  // );
   if (buttons.length === 0) return;
 
   // Création unique de l'overlay curseur
@@ -206,6 +209,10 @@ export function setupButtonHoverCursor(buttonSelector = '.button', sizePx = 24):
   };
 
   const show = (ev: MouseEvent) => {
+    // const target = ev.currentTarget as HTMLElement;
+    // Exclure l'élément avec l'id 'buy-button'
+    // if (target.id === 'buy-btn') return;
+
     visible = true;
     buttons.forEach((b) => {
       b.style.cursor = 'none';

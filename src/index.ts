@@ -9,6 +9,7 @@ import {
   svgComponent,
 } from './typescript/components/global';
 import {
+  initNavbarScroll,
   setupNavbarAutoContrast,
   setupNavbarBackgroundNonHero,
   setupNavbarHoverImages,
@@ -48,6 +49,7 @@ window.Webflow.push(() => {
   setupNavbarHoverImages();
   setupNavbarAutoContrast('.navbar_light-wrapper');
   setupNavbarMenuTextClick();
+  initNavbarScroll();
   setupDarkMode();
   faqDropdown('.faq_question');
   setupScrollTop('scroll-top', 200);
@@ -76,6 +78,7 @@ window.Webflow.push(() => {
   //How we make it
   if (window.location?.pathname.includes('/the-making')) {
     swiperStep();
+    sliderCustomCursor('.step_slider-wrapper', '.swiper.is-step');
   }
   //Custom pieces
   if (window.location?.pathname.includes('/custom-pieces')) {
