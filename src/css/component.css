@@ -8,6 +8,12 @@
   background-color: var(--_brand---background--primary);
 }
 
+/* Navbar scroll hide/show - fonctionne avec fixed et sticky */
+[data-component='navbar'].is-scroll-hidden {
+  transform: translateY(-5rem);
+  transition: transform 0.5s ease-in-out;
+}
+
 /* Dark mode: test couleur navbar */
 .body-dark-mode .navbar_dark-wrapper {
   color: var(--_brand---background--primary);

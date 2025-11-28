@@ -10,7 +10,7 @@ import {
 } from './typescript/components/global';
 import {
   initNavbarScroll,
-  setupNavbarAutoContrast,
+  /*setupNavbarAutoContrast,*/
   setupNavbarBackgroundNonHero,
   setupNavbarHoverImages,
   setupNavbarMenuTextClick,
@@ -47,7 +47,7 @@ import {
 window.Webflow ||= [];
 window.Webflow.push(() => {
   setupNavbarHoverImages();
-  setupNavbarAutoContrast('.navbar_light-wrapper');
+  /*setupNavbarAutoContrast('.navbar_light-wrapper');*/
   setupNavbarMenuTextClick();
   initNavbarScroll();
   setupDarkMode();

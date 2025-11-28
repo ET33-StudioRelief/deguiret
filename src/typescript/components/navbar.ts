@@ -1,5 +1,4 @@
 // Navbar hover images swapper
-
 export function setupNavbarHoverImages(
   linksSelector = '.navbar_link[data-image-url]',
   imageWrapperSelector = '.navbar_img-wrapper.is-desktop'
@@ -104,7 +103,7 @@ export function setupNavbarVariantOnMobile(
   mql.addEventListener?.('change', apply);
 }
 //NAVBAR AUTO CONTRAST - LOGO DARK/LIGHT
-export function setupNavbarAutoContrast(
+/*export function setupNavbarAutoContrast(
   navbarSelector = '.navbar_light-wrapper',
   contrastSelector = '[data-contrast="dark"]',
   navbarContrastClass = 'is-contrast'
@@ -151,7 +150,7 @@ export function setupNavbarAutoContrast(
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onResize);
   evaluate();
-}
+}*/
 
 // Enable menu opening by clicking on navbar_menu-txt
 export function setupNavbarMenuTextClick(): void {
@@ -221,52 +220,35 @@ export function setupNavbarBackgroundNonHero(
 }
 
 // Navbar hide/show on scroll down/up
-export function initNavbarScroll(
-  navbarSelector = '.navbar_component',
-  containerSelector = '.navbar_container'
-): void {
-  // Chercher le component (qui existe toujours)
-  const navbarComponent = document.querySelector<HTMLElement>(navbarSelector);
-  if (!navbarComponent) {
+export function initNavbarScroll(): void {
+  // Utiliser data-component pour cibler navbar classique et variantes
+  const navbar = document.querySelector<HTMLElement>('[data-component="navbar"]');
+
+  if (!navbar) {
     return;
-  }
-
-  // Détecter si c'est une variante Webflow
-  const isVariant = navbarComponent.className.split(' ').some((c) => c.startsWith('w-variant-'));
-
-  // Pour les variantes, utiliser directement le component
-  // Pour les non-variantes, chercher le container à l'intérieur si il existe
-  let navbar: HTMLElement;
-  if (isVariant) {
-    navbar = navbarComponent;
-  } else {
-    navbar = navbarComponent.querySelector<HTMLElement>(containerSelector) || navbarComponent;
   }
 
   // Vérifier si le menu est ouvert (Webflow ajoute w-nav-open sur le body ou la navbar)
   const isMenuOpen = (): boolean => {
     return (
       document.body.classList.contains('w-nav-open') ||
-      navbar?.classList.contains('w-nav-open') ||
+      navbar.classList.contains('w-nav-open') ||
       !!document.querySelector('.w-nav-overlay.w--open')
     );
   };
-
-  // Ajouter une transition smooth pour le transform
-  navbar.style.transition = 'transform 0.8s ease-in-out';
 
   let lastScrollY = window.scrollY;
   let isScrolling = false;
 
   const handleScroll = () => {
-    // Ne pas appliquer le transform si le menu est ouvert
+    // Ne pas appliquer la classe si le menu est ouvert
     if (isScrolling || isMenuOpen()) {
       return;
     }
 
     isScrolling = true;
     requestAnimationFrame(() => {
-      // Vérifier à nouveau si le menu est ouvert avant d'appliquer le transform
+      // Vérifier à nouveau si le menu est ouvert avant d'appliquer la classe
       if (isMenuOpen()) {
         isScrolling = false;
         return;
@@ -276,11 +258,11 @@ export function initNavbarScroll(
       const scrollDirection = currentScrollY > lastScrollY ? 'down' : 'up';
 
       if (scrollDirection === 'down' && currentScrollY > 0) {
-        // Scroll down : déplacer la navbar vers le haut de 5rem
-        navbar.style.transform = 'translateY(-5rem)';
+        // Scroll down : ajouter la classe pour cacher la navbar
+        navbar.classList.add('is-scroll-hidden');
       } else {
-        // Scroll up : remettre la navbar à sa position initiale
-        navbar.style.transform = 'translateY(0)';
+        // Scroll up : retirer la classe pour afficher la navbar
+        navbar.classList.remove('is-scroll-hidden');
       }
 
       lastScrollY = currentScrollY;
@@ -288,16 +270,16 @@ export function initNavbarScroll(
     });
   };
 
-  // Observer les changements d'état du menu pour réinitialiser le transform si nécessaire
-  const resetNavbarTransform = () => {
+  // Observer les changements d'état du menu pour retirer la classe si nécessaire
+  const resetNavbarClass = () => {
     if (isMenuOpen()) {
-      navbar.style.transform = 'translateY(0)';
+      navbar.classList.remove('is-scroll-hidden');
     }
   };
 
   // Observer les mutations sur le body et la navbar pour détecter l'ouverture/fermeture du menu
   const observer = new MutationObserver(() => {
-    resetNavbarTransform();
+    resetNavbarClass();
   });
 
   // Observer le body (pour w-nav-open)
