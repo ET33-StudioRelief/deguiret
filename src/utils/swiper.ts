@@ -1,5 +1,5 @@
 import Swiper from 'swiper';
-import { Autoplay, Controller, Pagination, Thumbs } from 'swiper/modules';
+import { Autoplay, Controller, Pagination } from 'swiper/modules';
 
 export function swiperStep() {
   // Guard: init seulement s'il existe au moins un wrapper de slider step
@@ -138,37 +138,37 @@ export function swiperTestimonial(): void {
   });
 }
 
-// Product slider with thumbnail pagination (two synced sliders)
+// Product slider with pagination
 export function swiperProduct(): void {
   const containers = Array.from(document.querySelectorAll<HTMLElement>('.product-slider_content'));
   if (containers.length === 0) return;
 
   containers.forEach((container) => {
     const main = container.querySelector<HTMLElement>('.swiper.is-product');
-    const thumbs = container.querySelector<HTMLElement>('.swiper.is-product-thumbs');
-    if (!main || !thumbs) return;
+    if (!main) return;
     if (main.dataset.swiperInitialized === 'true') return;
 
-    // Init thumbs first
-    const thumbsSwiper = new Swiper(thumbs, {
-      direction: 'horizontal',
-      slidesPerView: 4,
-      freeMode: true,
-      watchSlidesProgress: true,
-    });
+    // Pagination dans le container
+    const paginationEl = container.querySelector<HTMLElement>('.swiper-pagination.is-product');
 
-    // Init main slider with thumbs module
+    // Init main slider with pagination module
     const mainInstance = new Swiper(main, {
-      modules: [Thumbs],
+      modules: [Pagination],
       direction: 'horizontal',
       slidesPerView: 1,
       speed: 500,
       effect: 'slide',
       loop: true,
       allowTouchMove: true,
-      thumbs: {
-        swiper: thumbsSwiper,
-      },
+      pagination: paginationEl
+        ? {
+            el: paginationEl,
+            clickable: true,
+            bulletClass: 'swiper-bullet',
+            bulletActiveClass: 'is-active',
+            renderBullet: (_: number, className: string) => `<span class="${className}"></span>`,
+          }
+        : false,
     });
 
     main.dataset.swiperInitialized = 'true';
