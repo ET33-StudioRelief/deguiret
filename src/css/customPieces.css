@@ -4,3 +4,38 @@
 .project-custom_progress-step:focus-within > p {
   color: var(--_brand---text--primary) !important;
 }
+
+/* Media query: entre 1240px et 992px */
+@media screen and (min-width: 992px) and (max-width: 1240px) {
+  .section_project-custom.is-desktop {
+    display: none;
+  }
+  .section_timeline.is-custom-pieces.is-mobile {
+    display: block;
+    z-index: 1;
+    display: block;
+    background-image: linear-gradient(
+      180deg,
+      var(--_brand---background--primary),
+      var(--_brand---background--transparent) 36%,
+      var(--_brand---background--transparent) 85%,
+      var(--_brand---background--primary)
+    ) !important;
+  }
+  .section_custom-pieces-intro {
+    z-index: 2;
+    background-color: var(--_brand---background--primary);
+  }
+  .section_hero-slider {
+    z-index: 3;
+  }
+}
+
+/* Media query: entre 1285px et 992px */
+@media screen and (min-width: 992px) and (max-width: 1285px) {
+  .collection_grid {
+    display: flex;
+    flex-flow: column;
+    grid-template-columns: 1fr;
+  }
+}

@@ -69,6 +69,12 @@
   }
 }
 
+@media screen and (min-width: 992px) and (max-width: 1100px) {
+  .product-hero_content {
+    max-height: none !important;
+  }
+}
+
 @media screen and (max-width: 767px) {
   .product-hero_img-wrap {
     order: -1 !important; /* passe avant .product-hero_left */
