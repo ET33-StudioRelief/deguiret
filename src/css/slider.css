@@ -21,18 +21,6 @@
 .swiper-bullet.is-active {
   background: var(--_brand---background--tertiary);
 }
-/* Product slider thumbs */
-.swiper-slide.is-product-thumbs {
-  width: 2rem !important;
-  opacity: 0.75;
-  transition: all 300ms ease;
-}
-
-.swiper-slide.is-product-thumbs.swiper-slide-thumb-active {
-  width: 8.75rem !important;
-  opacity: 1 !important;
-}
-
 /* Collection slider - fade aux extrémités (desktop uniquement) */
 @media (min-width: 992px) {
   .collection-slider_content {
