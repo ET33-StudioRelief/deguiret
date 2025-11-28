@@ -221,26 +221,57 @@ export function setupNavbarBackgroundNonHero(
 }
 
 // Navbar hide/show on scroll down/up
-/*export function initNavbarScroll(): void {
-  const navbar = document.querySelector<HTMLElement>('.navbar_component');
-
-  if (!navbar) {
+export function initNavbarScroll(
+  navbarSelector = '.navbar_component',
+  containerSelector = '.navbar_container'
+): void {
+  // Chercher le component (qui existe toujours)
+  const navbarComponent = document.querySelector<HTMLElement>(navbarSelector);
+  if (!navbarComponent) {
     return;
   }
 
+  // Détecter si c'est une variante Webflow
+  const isVariant = navbarComponent.className.split(' ').some((c) => c.startsWith('w-variant-'));
+
+  // Pour les variantes, utiliser directement le component
+  // Pour les non-variantes, chercher le container à l'intérieur si il existe
+  let navbar: HTMLElement;
+  if (isVariant) {
+    navbar = navbarComponent;
+  } else {
+    navbar = navbarComponent.querySelector<HTMLElement>(containerSelector) || navbarComponent;
+  }
+
+  // Vérifier si le menu est ouvert (Webflow ajoute w-nav-open sur le body ou la navbar)
+  const isMenuOpen = (): boolean => {
+    return (
+      document.body.classList.contains('w-nav-open') ||
+      navbar?.classList.contains('w-nav-open') ||
+      !!document.querySelector('.w-nav-overlay.w--open')
+    );
+  };
+
   // Ajouter une transition smooth pour le transform
-  navbar.style.transition = 'transform 0.5s ease-in-out';
+  navbar.style.transition = 'transform 0.8s ease-in-out';
 
   let lastScrollY = window.scrollY;
   let isScrolling = false;
 
   const handleScroll = () => {
-    if (isScrolling) {
+    // Ne pas appliquer le transform si le menu est ouvert
+    if (isScrolling || isMenuOpen()) {
       return;
     }
 
     isScrolling = true;
     requestAnimationFrame(() => {
+      // Vérifier à nouveau si le menu est ouvert avant d'appliquer le transform
+      if (isMenuOpen()) {
+        isScrolling = false;
+        return;
+      }
+
       const currentScrollY = window.scrollY;
       const scrollDirection = currentScrollY > lastScrollY ? 'down' : 'up';
 
@@ -257,5 +288,29 @@ export function setupNavbarBackgroundNonHero(
     });
   };
 
+  // Observer les changements d'état du menu pour réinitialiser le transform si nécessaire
+  const resetNavbarTransform = () => {
+    if (isMenuOpen()) {
+      navbar.style.transform = 'translateY(0)';
+    }
+  };
+
+  // Observer les mutations sur le body et la navbar pour détecter l'ouverture/fermeture du menu
+  const observer = new MutationObserver(() => {
+    resetNavbarTransform();
+  });
+
+  // Observer le body (pour w-nav-open)
+  observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['class'],
+  });
+
+  // Observer aussi la navbar elle-même (utile pour les variantes)
+  observer.observe(navbar, {
+    attributes: true,
+    attributeFilter: ['class'],
+  });
+
   window.addEventListener('scroll', handleScroll, { passive: true });
-}*/
+}
