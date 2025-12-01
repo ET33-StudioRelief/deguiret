@@ -5,6 +5,7 @@ import {
   faqDropdown,
   setupButtonHoverCursor,
   setupScrollTop,
+  setupTimelineProgressBar,
   sliderCustomCursor,
   svgComponent,
 } from './typescript/components/global';
@@ -79,6 +80,7 @@ window.Webflow.push(() => {
   if (window.location?.pathname.includes('/the-making')) {
     swiperStep();
     sliderCustomCursor('.step_slider-wrapper', '.swiper.is-step');
+    setupTimelineProgressBar();
   }
   //Custom pieces
   if (window.location?.pathname.includes('/custom-pieces')) {
@@ -87,6 +89,7 @@ window.Webflow.push(() => {
     setupCustomPiecesProgress('.project-custom_content');
     swiperTestimonial();
     sliderCustomCursor('.testimonial_left-col', '.swiper.is-testimonial');
+    setupTimelineProgressBar();
   }
   //Our story
   if (window.location?.pathname.includes('/our-story')) {
