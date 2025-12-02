@@ -194,7 +194,7 @@ export function setupWatchesViewToggle(): void {
     const rect = target.getBoundingClientRect();
     const navbar = document.querySelector<HTMLElement>('.navbar_component');
     const navbarHeight = navbar ? navbar.offsetHeight : 0;
-    const targetPosition = window.scrollY + rect.top - navbarHeight - 20; // 20px de marge
+    const targetPosition = window.scrollY + rect.top - navbarHeight; // Positionné juste sous la navbar
 
     window.scrollTo({
       top: Math.max(0, targetPosition),
@@ -558,7 +558,7 @@ export function setupWatchesSortToggle(
     const rect = target.getBoundingClientRect();
     const navbar = document.querySelector<HTMLElement>('.navbar_component');
     const navbarHeight = navbar ? navbar.offsetHeight : 0;
-    const targetPosition = window.scrollY + rect.top - navbarHeight - 20; // 20px de marge
+    const targetPosition = window.scrollY + rect.top - navbarHeight; // Positionné juste sous la navbar
 
     window.scrollTo({
       top: Math.max(0, targetPosition),
