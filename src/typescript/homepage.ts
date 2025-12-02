@@ -386,8 +386,18 @@ export function setupWatchesFloat(selector = '.watches_gallery_item-wrap', amp =
   const els = Array.from(document.querySelectorAll<HTMLElement>(selector));
   if (els.length === 0) return;
 
+  const minWidthDesktop = 992; // Actif uniquement sur écrans > 991px
+
   // Floating calculation based on position in the window
   const updateAll = () => {
+    // Désactiver sur mobile/tablette (<= 991px)
+    if (window.innerWidth < minWidthDesktop) {
+      els.forEach((el) => {
+        el.style.transform = '';
+      });
+      return;
+    }
+
     const viewportHeight = window.innerHeight;
     const viewportCenter = viewportHeight / 2;
     els.forEach((el) => {
@@ -766,34 +776,16 @@ function closeAllDropdowns(): void {
   });
 }
 
-// Scroll to TOP when a filter is selected
-export function setupWatchesFilterScrollToTop(
-  targetSelector = '.watches_content',
+// Close dropdowns when a filter is selected (without scroll)
+export function setupWatchesFilterCloseDropdowns(
   filterSelector = 'form[fs-list-element="filters"] input[type="radio"]'
 ): void {
-  const target = document.querySelector<HTMLElement>(targetSelector);
-  if (!target) return;
-
-  const scrollToFilter = () => {
-    const rect = target.getBoundingClientRect();
-    const navbar = document.querySelector<HTMLElement>('.navbar_component');
-    const navbarHeight = navbar ? navbar.offsetHeight : 0;
-    const targetPosition = window.scrollY + rect.top - navbarHeight - 20; // 20px de marge
-
-    window.scrollTo({
-      top: Math.max(0, targetPosition),
-      behavior: 'smooth',
-    });
-  };
-
   // Écouter les changements sur les inputs radio des filtres
   document.addEventListener('change', (e) => {
     const target = e.target as HTMLElement;
     if (target.matches && target.matches(filterSelector)) {
       // Fermer les dropdowns immédiatement
       closeAllDropdowns();
-      // Petit délai pour laisser Finsweet appliquer les filtres
-      setTimeout(scrollToFilter, 100);
     }
   });
 
@@ -806,8 +798,63 @@ export function setupWatchesFilterScrollToTop(
     () => {
       // Fermer les dropdowns après application des filtres
       closeAllDropdowns();
-      // Scroll après que les filtres soient appliqués
-      setTimeout(scrollToFilter, 150);
     },
   ]);
+}
+
+// Update filter count badges for STATUS and COLLECTION filters
+export function setupWatchesFilterCounts(): void {
+  function updateFilterCounts(): void {
+    // Compter les filtres STATUS actifs (excluant "All")
+    const statusFilters = document.querySelectorAll<HTMLInputElement>(
+      'input[fs-list-field="status"]:checked:not([value="All"])'
+    );
+    const statusCount = statusFilters.length;
+
+    // Compter les filtres COLLECTION actifs (excluant "All")
+    const collectionFilters = document.querySelectorAll<HTMLInputElement>(
+      'input[fs-list-field="collection"]:checked:not([value="All"])'
+    );
+    const collectionCount = collectionFilters.length;
+
+    // Mettre à jour les badges STATUS
+    const statusBadges = document.querySelectorAll<HTMLElement>(
+      '.filter-count[data-filter-type="status"]'
+    );
+    statusBadges.forEach((badge) => {
+      if (statusCount > 0) {
+        badge.textContent = `(${statusCount})`;
+        badge.style.display = 'inline';
+      } else {
+        badge.style.display = 'none';
+      }
+    });
+
+    // Mettre à jour les badges COLLECTION
+    const collectionBadges = document.querySelectorAll<HTMLElement>(
+      '.filter-count[data-filter-type="collection"]'
+    );
+    collectionBadges.forEach((badge) => {
+      if (collectionCount > 0) {
+        badge.textContent = `(${collectionCount})`;
+        badge.style.display = 'inline';
+      } else {
+        badge.style.display = 'none';
+      }
+    });
+  }
+
+  // Écouter les changements sur TOUS les radios
+  document.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((radio) => {
+    radio.addEventListener('change', updateFilterCounts);
+  });
+
+  // Hook Finsweet pour mettre à jour après application des filtres
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).fsAttributes = (window as any).fsAttributes || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).fsAttributes.push(['cmsfilter', () => updateFilterCounts()]);
+
+  // Mise à jour initiale au chargement
+  updateFilterCounts();
 }
