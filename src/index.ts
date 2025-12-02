@@ -22,7 +22,8 @@ import { setupCustomPiecesProgress } from './typescript/customPieces';
 import {
   galleryTextBlock,
   setupEmptyBannerByResults,
-  setupWatchesFilterScrollToTop,
+  setupWatchesFilterCloseDropdowns,
+  setupWatchesFilterCounts,
   setupWatchesFloat,
   setupWatchesGalleryTextClickBlock,
   setupWatchesGridMobile,
@@ -48,7 +49,6 @@ import {
 window.Webflow ||= [];
 window.Webflow.push(() => {
   setupNavbarHoverImages();
-  /*setupNavbarAutoContrast('.navbar_light-wrapper');*/
   setupNavbarMenuTextClick();
   initNavbarScroll();
   setupDarkMode();
@@ -67,7 +67,8 @@ window.Webflow.push(() => {
     setupWatchesFloat('.watches_gallery_item-wrap');
     setupWatchesGridMobile();
     setupWatchesGalleryTextClickBlock();
-    setupWatchesFilterScrollToTop();
+    setupWatchesFilterCloseDropdowns();
+    setupWatchesFilterCounts();
     setupNavbarBackgroundNonHero();
   }
   //Who we are
