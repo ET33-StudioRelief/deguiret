@@ -274,3 +274,36 @@ export function faqDropdown(questionSelector = '.faq_question'): void {
     });
   });
 }
+
+/** Timeline progress bar animation - fade  when timeline component enters/exit viewport */
+export function setupTimelineProgressBar(
+  componentSelector = '.timeline_component',
+  progressBarSelector = '.timeline_progress-bar'
+): void {
+  const components = Array.from(document.querySelectorAll<HTMLElement>(componentSelector));
+  if (components.length === 0) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-inview');
+        } else {
+          entry.target.classList.remove('is-inview');
+        }
+      });
+    },
+    {
+      threshold: 0.1, // Déclenche quand 10% du composant est visible
+      rootMargin: '0px',
+    }
+  );
+
+  components.forEach((component) => {
+    // Vérifier que la barre de progression existe dans ce composant
+    const progressBar = component.querySelector(progressBarSelector);
+    if (progressBar) {
+      observer.observe(component);
+    }
+  });
+}

@@ -9,9 +9,12 @@
 }
 
 /* Navbar scroll hide/show - fonctionne avec fixed et sticky */
+[data-component='navbar'] {
+  transition: transform 0.5s ease-in-out;
+}
+
 [data-component='navbar'].is-scroll-hidden {
   transform: translateY(-5rem);
-  transition: transform 0.5s ease-in-out;
 }
 
 /* Dark mode: test couleur navbar */

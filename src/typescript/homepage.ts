@@ -186,9 +186,9 @@ export function setupWatchesViewToggle(): void {
     if (txt) label.textContent = txt.toUpperCase();
   };
 
-  // Fonction pour scroller vers watches_content
+  // Fonction pour scroller vers gallery-anchor
   const scrollToWatchesContent = () => {
-    const target = document.querySelector<HTMLElement>('.watches_content');
+    const target = document.querySelector<HTMLElement>('#gallery-anchor');
     if (!target) return;
 
     const rect = target.getBoundingClientRect();
@@ -549,10 +549,10 @@ export function setupWatchesSortToggle(
   };
 
   /**
-   * Scroll to watches_content when sort order changes
+   * Scroll to gallery-anchor when sort order changes
    */
   const scrollToWatchesContent = () => {
-    const target = document.querySelector<HTMLElement>('.watches_content');
+    const target = document.querySelector<HTMLElement>('#gallery-anchor');
     if (!target) return;
 
     const rect = target.getBoundingClientRect();

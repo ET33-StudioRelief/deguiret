@@ -1,3 +1,13 @@
+/* Timeline progress bar - opacity animation */
+.timeline_progress-bar {
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+}
+
+.timeline_component.is-inview .timeline_progress-bar {
+  opacity: 1;
+}
+
 @media screen and (min-width: 992px) and (max-width: 1310px) {
   .timeline_item {
     display: flex;
