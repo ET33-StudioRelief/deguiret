@@ -24,6 +24,7 @@ import {
   setupEmptyBannerByResults,
   setupWatchesFilterCloseDropdowns,
   setupWatchesFilterCounts,
+  setupWatchesFilterScrollToTop,
   setupWatchesFloat,
   setupWatchesGalleryTextClickBlock,
   setupWatchesGridMobile,
@@ -69,6 +70,7 @@ window.Webflow.push(() => {
     setupWatchesGalleryTextClickBlock();
     setupWatchesFilterCloseDropdowns();
     setupWatchesFilterCounts();
+    setupWatchesFilterScrollToTop();
     setupNavbarBackgroundNonHero();
   }
   //Who we are

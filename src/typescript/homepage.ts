@@ -858,3 +858,43 @@ export function setupWatchesFilterCounts(): void {
   // Mise à jour initiale au chargement
   updateFilterCounts();
 }
+
+// Scroll to gallery-anchor when a filter is selected
+export function setupWatchesFilterScrollToTop(
+  filterSelector = 'form[fs-list-element="filters"] input[type="radio"]'
+): void {
+  const scrollToGalleryAnchor = () => {
+    const target = document.querySelector<HTMLElement>('#gallery-anchor');
+    if (!target) return;
+
+    target.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  };
+
+  // Écouter les changements sur les inputs radio des filtres
+  document.addEventListener('change', (e) => {
+    const target = e.target as HTMLElement;
+    if (target.matches && target.matches(filterSelector)) {
+      // Fermer les dropdowns immédiatement
+      closeAllDropdowns();
+      // Petit délai pour laisser Finsweet appliquer les filtres
+      setTimeout(scrollToGalleryAnchor, 100);
+    }
+  });
+
+  // Hook Finsweet pour capturer les changements de filtres
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).fsAttributes = (window as any).fsAttributes || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).fsAttributes.push([
+    'cmsfilter',
+    () => {
+      // Fermer les dropdowns après application des filtres
+      closeAllDropdowns();
+      // Scroll après que les filtres soient appliqués
+      setTimeout(scrollToGalleryAnchor, 150);
+    },
+  ]);
+}
