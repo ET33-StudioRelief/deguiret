@@ -859,11 +859,30 @@ export function setupWatchesFilterCounts(): void {
   updateFilterCounts();
 }
 
-// Scroll to gallery-anchor when a filter is selected
+// Scroll to gallery-anchor when a filter is selected (only if user has scrolled in collections wrapper)
 export function setupWatchesFilterScrollToTop(
   filterSelector = 'form[fs-list-element="filters"] input[type="radio"]'
 ): void {
+  const collectionsWrapper = document.querySelector<HTMLElement>('.watches_collections-wrapper');
+  if (!collectionsWrapper) return;
+
+  // Vérifier si l'utilisateur se trouve dans .watches_collections-wrapper au moment du clic
+  // On vérifie si le centre du viewport est dans la zone du wrapper
+  const isUserInCollectionsWrapper = (): boolean => {
+    const rect = collectionsWrapper.getBoundingClientRect();
+    const wrapperTop = rect.top + window.scrollY;
+    const wrapperBottom = wrapperTop + rect.height;
+    const currentScroll = window.scrollY;
+    const viewportCenter = currentScroll + window.innerHeight / 2;
+
+    // L'utilisateur est "dans" le wrapper si le centre du viewport est dans la zone
+    return viewportCenter >= wrapperTop && viewportCenter <= wrapperBottom;
+  };
+
   const scrollToGalleryAnchor = () => {
+    // Ne scroller que si l'utilisateur se trouve dans .watches_collections-wrapper
+    if (!isUserInCollectionsWrapper()) return;
+
     const target = document.querySelector<HTMLElement>('#gallery-anchor');
     if (!target) return;
 
@@ -877,10 +896,14 @@ export function setupWatchesFilterScrollToTop(
   document.addEventListener('change', (e) => {
     const target = e.target as HTMLElement;
     if (target.matches && target.matches(filterSelector)) {
+      // Vérifier IMMÉDIATEMENT si l'utilisateur est dans la zone (avant tout délai)
+      const shouldScroll = isUserInCollectionsWrapper();
       // Fermer les dropdowns immédiatement
       closeAllDropdowns();
       // Petit délai pour laisser Finsweet appliquer les filtres
-      setTimeout(scrollToGalleryAnchor, 100);
+      if (shouldScroll) {
+        setTimeout(scrollToGalleryAnchor, 100);
+      }
     }
   });
 
@@ -891,10 +914,14 @@ export function setupWatchesFilterScrollToTop(
   (window as any).fsAttributes.push([
     'cmsfilter',
     () => {
+      // Vérifier IMMÉDIATEMENT si l'utilisateur est dans la zone (avant tout délai)
+      const shouldScroll = isUserInCollectionsWrapper();
       // Fermer les dropdowns après application des filtres
       closeAllDropdowns();
       // Scroll après que les filtres soient appliqués
-      setTimeout(scrollToGalleryAnchor, 150);
+      if (shouldScroll) {
+        setTimeout(scrollToGalleryAnchor, 150);
+      }
     },
   ]);
 }
