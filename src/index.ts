@@ -112,4 +112,8 @@ window.Webflow.push(() => {
     setupProductFeaturesTable();
     setupProductPrevNext('#show-prev-product', '#show-next-product', '.w-dyn-items .w-dyn-item a');
   }
+  //Our story
+  if (window.location?.pathname.includes(' /ypo/')) {
+    setupProductFeaturesTable();
+  }
 });
