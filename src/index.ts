@@ -113,7 +113,14 @@ window.Webflow.push(() => {
     setupProductPrevNext('#show-prev-product', '#show-next-product', '.w-dyn-items .w-dyn-item a');
   }
   //Our story
-  if (window.location?.pathname.includes(' /ypo/')) {
+  if (window.location?.pathname.includes('/ypo/')) {
+    swiperProduct();
+    sliderCustomCursor('.product-slider_content', '.swiper.is-product');
+    sliderCustomCursor(
+      '.collection-slider_content',
+      '.swiper.is-collection',
+      '.swiper.is-collection .swiper-slide.is-center .collection-slider_card'
+    );
     setupProductFeaturesTable();
   }
 });
